@@ -29,9 +29,9 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.gnu.utils.commands;
+package com.nohkumado.utils.commands;
 import java.util.*;
-import com.gnu.utils.*;
+import com.nohkumado.utils.*;
 
 public class PwdCommand extends Command implements Cloneable, CommandI
 {

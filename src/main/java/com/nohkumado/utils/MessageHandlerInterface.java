@@ -27,7 +27,7 @@
  * @author Bruno Boettcher
  * @author Email: bboett@adlp.org
  */
-package com.gnu.utils;
+package com.nohkumado.utils;
 import java.util.*;
 
 

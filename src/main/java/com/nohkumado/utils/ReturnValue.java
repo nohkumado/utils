@@ -27,10 +27,10 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-package com.gnu.utils;
+package com.nohkumado.utils;
 
 //import Data.Dumper;
-import com.gnu.utils.*;
+import com.nohkumado.utils.*;
 import java.util.*;
 
 public class ReturnValue<E> implements Cloneable

@@ -27,7 +27,7 @@
  * @author Bruno Boettcher
  * @author Email: bboett@adlp.org
  */
-package com.gnu.utils;
+package com.nohkumado.utils;
 import java.util.*;
 
 
@@ -38,7 +38,7 @@ import java.util.*;
  * @version $Revision: 1.1 $
  */
 //public class MessageUser extends JComponent implements MouseListener 
-public class MessageUser implements com.gnu.utils.MessageUserInterface
+public class MessageUser implements com.nohkumado.utils.MessageUserInterface
 {
   protected MessageHandlerInterface messageHandler = null;
   protected ResourceBundle msg = null;

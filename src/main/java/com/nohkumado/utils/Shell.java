@@ -28,15 +28,15 @@
  *  Foundation, Inc+, 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA+
 */
 
-package com.gnu.utils;
+package com.nohkumado.utils;
 
 //import com.gnu.utils.*;
 import java.util.*;
 import java.io.*;
-import com.gnu.utils.*;
+import com.nohkumado.utils.*;
 import java.util.Scanner;
 
-public class Shell extends com.gnu.utils.ConfigUser implements Cloneable,com.gnu.utils.ShellI
+public class Shell extends com.nohkumado.utils.ConfigUser implements Cloneable,com.nohkumado.utils.ShellI
 {
   protected HashMap<String,Object> environment = new HashMap<String,Object>();
   protected MessageUser messageUser = new MessageUser();

@@ -1,9 +1,9 @@
 /**
  * 
  */
-package com.gnu.utils.test;
+package com.nohkumado.utils.test;
 
-import com.gnu.utils.*;
+import com.nohkumado.utils.*;
 import java.math.*;
 import java.util.*;
 

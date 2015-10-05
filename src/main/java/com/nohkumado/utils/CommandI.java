@@ -1,4 +1,4 @@
-/** Id: CommandI.java,v 1.4 2005/09/30 16:24:48 bboett Exp  -*- java -*-
+ /** Id: CommandI.java,v 1.4 2005/09/30 16:24:48 bboett Exp  -*- java -*-
  *
  * NAME CommandI 
  *
@@ -32,7 +32,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package com.gnu.utils;
+package com.nohkumado.utils;
 import java.util.*;
 //import com.gnu.utils.*;
 

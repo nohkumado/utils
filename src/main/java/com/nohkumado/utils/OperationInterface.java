@@ -22,8 +22,8 @@
  * CONSEQUENTIAL DAMAGES RELATING  TO THE SOFTWARE.
  */
 
-package com.gnu.utils;
-import  com.gnu.utils.*;
+package com.nohkumado.utils;
+import  com.nohkumado.utils.*;
 import  java.util.*;
 
 /** 

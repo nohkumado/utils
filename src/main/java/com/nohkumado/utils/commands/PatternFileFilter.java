@@ -22,7 +22,7 @@
  * CONSEQUENTIAL DAMAGES RELATING  TO THE SOFTWARE.
  */
 
-package com.gnu.utils.commands;
+package com.nohkumado.utils.commands;
  import java.util.prefs.*;
  import java.util.*;
  import java.io.*;

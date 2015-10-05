@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gnu.utils;
+package com.nohkumado.utils;
 
 import java.math.*;
 import java.util.*;
