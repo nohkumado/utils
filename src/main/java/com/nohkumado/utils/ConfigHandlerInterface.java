@@ -35,7 +35,7 @@
 
 package com.nohkumado.utils;
 
-import com.gnu.utils.*;
+import com.nohkumado.utils.*;
 import java.util.*;
 import java.util.regex.*;
 import java.io.*;
