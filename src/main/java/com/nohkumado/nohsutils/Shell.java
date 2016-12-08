@@ -1,12 +1,12 @@
 /** Id: Shell.java,v 1+4 2005/09/30 16:24:48 bboett Exp  -*- java -*-
  *
- * NAME Shell 
+ * NAME Shell
  *
- * AUTHOR Bruno Boettcher <bboett at adlp+org> 
+ * AUTHOR Bruno Boettcher <bboett at adlp+org>
  *
- * SEE ALSO no docu at the moment 
+ * SEE ALSO no docu at the moment
  *
- * DESCRIPTION 
+ * DESCRIPTION
  * a class of object that takes a plan and produces something
  *
  * COPYRIGHT and LICENCE
@@ -45,6 +45,7 @@ import java.util.*;
  */
 public class Shell extends ConfigUser implements ShellI
 {
+  private static final int MAXLINES = 100;
   protected HashMap<String,Object> environment = new HashMap<>();
   protected MessageUser messageUser = new MessageUser();
   protected MessageHandlerInterface messageHandler = null;
@@ -55,8 +56,17 @@ public class Shell extends ConfigUser implements ShellI
   protected boolean batchMode = false;
   protected boolean running = true;
   protected String scanType = null;
+  protected int maxLines = 1024;
+  protected CommandI actQuestion = null;
+  protected ArrayList<String> history = new ArrayList<>();
+  protected  int maxHistory = 1024;
+  protected int histNavigation = 0;
+  private int tabcount;
+  private boolean overwrite = false;
+  protected ShellI parentShell, childShell = null;
+  protected Stack<String> promptStack = new Stack<>();
 
-  /** 
+  /**
    * CTOR
 */
   //public Shell(CmdLineParserI p)
@@ -66,11 +76,11 @@ public class Shell extends ConfigUser implements ShellI
 
     setConfHandler(new ConfigHandler());
     setI8nHandler(new MessageHandler(configHandler));
-    
+
      cmdParser = new CmdLineParser(configHandler, messageHandler);
-    
+
     cmdParser.shell(this);
-    
+
 
     ArrayList<CommandI> cmds = new ArrayList<CommandI>();
     cmds.add(new CdCommand(this));
@@ -78,12 +88,12 @@ public class Shell extends ConfigUser implements ShellI
     cmds.add(new PwdCommand(this));
     cmds.add(new QuitCommand(this));
     cmds.add(new SetCommand(this));
-    
-    
+
+
     cmdParser.feedCmds(cmds);
-    
+
     in = System.in;
-    ressource("shell",this);
+    get("shell",this);
     }// public Shell()
   /** CTOR
    * @param p
@@ -98,12 +108,12 @@ public class Shell extends ConfigUser implements ShellI
     else cmdParser = p;
     cmdParser.shell(this);
     in = System.in;
-    ressource("shell",this);
+    get("shell",this);
     messageUser.setI8nHandler(m);
   }// public Shell()
 
   /**
-   * Shell 
+   * Shell
    * @param c
    * @param m
    */
@@ -121,7 +131,19 @@ public class Shell extends ConfigUser implements ShellI
   @Override
   public boolean init()
   {
-    if(ressource("prompt") == null) ressource("prompt","> ");
+    if (Shell.this.get("maxlines") == null) get("maxlines", MAXLINES);
+		try
+		{
+			maxLines = Integer.parseInt(Shell.this.get("maxlines").toString());
+		}
+		catch (NumberFormatException e)
+		{
+			maxLines = MAXLINES;
+		}
+
+		//debug( "init printing start message");
+		print(msg("start"));
+prompt();
     return(true);
   }//public void init
   /**
@@ -139,7 +161,7 @@ public class Shell extends ConfigUser implements ShellI
     //TODO check if shell is allready running otherwise push into a TODO stack
     String retVal = "";
      ArrayList<CommandI> toWorkOf = cmdParser.parse(line);
-     if(toWorkOf.size() > 0) 
+     if(toWorkOf.size() > 0)
        for (CommandI aCmd : toWorkOf) {
          if(aCmd != null)
          {
@@ -151,7 +173,7 @@ public class Shell extends ConfigUser implements ShellI
          else
            retVal= "cmd was null??";
     } //for(Iterator<CommandI> i = toWorkOf.iterator(); i.hasNext();)
-    
+
     return(retVal);
   }//end process
   /**
@@ -164,7 +186,7 @@ public class Shell extends ConfigUser implements ShellI
     this one is for internal use, when invoking commands through the shell programmately, so no command parsing is needed, parameters are in a hastable
    * @param line
    * @param parm
-   * @return 
+   * @return
    */
   @Override
   public String process(String line,HashMap<String,Object> parm)
@@ -172,11 +194,11 @@ public class Shell extends ConfigUser implements ShellI
     //TODO check if shell is allready running otherwise push into a TODO stack
     String retVal = "";
     CommandI aCmd = cmdParser.findCmd(line);
-    if(aCmd != null) 
+    if(aCmd != null)
     {
       aCmd.setParameters(parm);
       retVal = aCmd.execute();
-    }//if(aCmd != null) 
+    }//if(aCmd != null)
     return(retVal);
   }//end process
   /**
@@ -222,12 +244,12 @@ public class Shell extends ConfigUser implements ShellI
   @Override
   public String prompt()
   {
-    String prompt = (String) ressource("prompt");
-    if(prompt == null) 
+    String prompt = (String)get("prompt");
+    if(prompt == null)
     {
       prompt = "> ";
-       ressource("prompt",prompt);
-    }// if(prompt == null) 
+       get("prompt",prompt);
+    }// if(prompt == null)
     if(prompt.matches(".*(\\w).*"))
     {
       String pwd = (String)ressource("pwd");
@@ -236,13 +258,13 @@ public class Shell extends ConfigUser implements ShellI
     }// if(prompt.matches(".*\\\\w.*")pp)
     return(prompt);
   }//end prompt
-  /** 
-   * setter for promtp 
-   * 
-   * @param p 
+  /**
+   * setter for promtp
+   *
+   * @param p
    */
   @Override
-  public void prompt(String p) { ressource("prompt", p); }
+  public void prompt(String p) { get("prompt", p); }
   /**
 
     exit
@@ -258,33 +280,33 @@ public class Shell extends ConfigUser implements ShellI
     running = false;
     //System.out.println("set running to false....");
   }//end exit
-  /** 
-   * ressources 
+  /**
+   * ressources
    *
    * equivalent to the environment variables of a shell....
    TODO check with the other projects here a confusion between settings from config handler which are stored betweend sessions and local vars that should be dropped::::
-   * 
-   * @param envname 
-   * @return  
+   *
+   * @param envname
+   * @return
    */
   @Override
   public java.lang.Object ressource(String envname)
   {
-    //TODO somehow check if a ressource change needs to trigger something e.g. chanign the basename requires reloading of the data...
+    //TODO somehow check if a get change needs to trigger something e.g. chanign the basename requires reloading of the data...
     if(envname == null) return(environment);
     //TODO need to separate settings from environment, the same as shellvars are separated from global vars,,,,,
-    //need a set method in shell diffreent from ressource....
+    //need a set method in shell diffreent from get....
     //if(settings.get(envname,null) != null) return(settings.get(envname,null));
     else if(!"".equals(envname)) return(environment.get(envname));
     else return(null);
-  }// public Object ressource(String envname)
-  /** 
-   * rmRessources 
+  }// public Object get(String envname)
+  /**
+   * rmRessources
    *
    * equivalent to the rm environment variables of a shell....
-   * 
-   * @param envname 
-   * @return  
+   *
+   * @param envname
+   * @return
    */
   public java.lang.Object rmRessource(String envname)
   {
@@ -297,12 +319,12 @@ public class Shell extends ConfigUser implements ShellI
     if(environment.containsKey(envname)) result = environment.remove(envname);
     return(result);
   }// public Object rmRessource(String envname)
-  /** 
-   * get 
+  /**
+   * get
    *
    * equivalent to the environment variables of a shell....
-   * 
-   * @param envname 
+   *
+   * @param envname
    * @return the objet of the setting to get
    */
   @Override
@@ -312,50 +334,50 @@ public class Shell extends ConfigUser implements ShellI
     if(settings.get(envname,null) != null) return(settings.get(envname,null));
     else return(settings);
   }// public Object get(String envname)
-  /** 
-   * ressources 
+  /**
+   * ressources
    *
    * equivalent to the environment variables of a shell....
-   * 
-   * @param envname 
-   * @param obj 
+   *
+   * @param envname
+   * @param obj
    */
   @Override
-  public void ressource(String envname, Object obj)
+  public void get(String envname, Object obj)
   {
     environment.put(envname, obj);
     if(obj instanceof String) settings.put(envname,(String) obj);
     else if(obj instanceof Integer) settings.putInt(envname, ((Integer) obj));
     environment.put(envname,obj);
     //TODO and the rest
-  }// public Object ressource(String envname)
-  /** 
-   * prototype for a help function 
-   * 
-   * @return 
+  }// public Object get(String envname)
+  /**
+   * prototype for a help function
+   *
+   * @return
    */
   @Override
   public String help()
   {
 
-    return("");
+    return(cmdParser.help());
   }//end help
   @Override
   public void setI8nHandler(MessageHandlerInterface m)
-  {   
+  {
     messageHandler = m;
     messageUser.setI8nHandler(m);
   }// public void setI8nHandler(MessageHandlerInterface m)
   @Override
   public MessageHandlerInterface getI8nHandler()
   {
-    return(messageHandler); 
+    return(messageHandler);
   }// public MessageHandlerInterface getI8nHandler()
-  /** 
+  /**
    * returns the message associated with a token
-   * 
-   * @param m 
-   * @return 
+   *
+   * @param m
+   * @return
    */
   @Override
   public String msg(String m)
@@ -363,8 +385,32 @@ public class Shell extends ConfigUser implements ShellI
     return(messageUser.msg(m));
   }// public String msg(String m)
   /**
-run: 
-event loop 
+	 executeCommands
+	 @param toWorkOf
+	 cycle over list and execute the stored commands, i think not thread safe...
+	 */
+	private void executeCommands(ArrayList<CommandI> toWorkOf)
+	{
+		if (toWorkOf.size() > 0)
+			for (Iterator<CommandI> i = toWorkOf.iterator(); i.hasNext();)
+			{
+				CommandI aCmd = i.next();
+				if (aCmd != null)
+				{
+					//System.out.println("abpout to exe: "+aCmd);
+					String retVal = aCmd.execute();
+					//debug( "res3\n" + retVal);
+
+					if (retVal != "") print(retVal);
+					//System.out.println("retVal = "+retVal);
+				}//if(aCmd != null)
+				else
+					System.out.println("cmd was null??");
+			}
+}//public void run()
+  /**
+run:
+event loop
    */
   @Override
  public void run()
@@ -374,11 +420,11 @@ event loop
     *exhaustion */
    //System.out.println("runnning is "+running);
    //TODO check if the todo list is filled and exe those commands prior to anything else
-   while (running == true) 
+   while (running == true)
    {
      if(!batchMode) writeStream(prompt());
      ArrayList<CommandI> toWorkOf = cmdParser.parse(read());
-     if(toWorkOf.size() > 0) 
+     if(toWorkOf.size() > 0)
        for (CommandI aCmd : toWorkOf) {
          if(aCmd != null)
          {
@@ -390,13 +436,13 @@ event loop
          else
            System.out.println("cmd was null??");
      } //for(Iterator<CommandI> i = toWorkOf.iterator(); i.hasNext();)
-     
-   }//while (running == true) 
+
+   }//while (running == true)
  }//public void run()
   /**
-  read: 
+  read:
   read a line of commands
-   * @return 
+   * @return
    */
   public String read()
   {
@@ -539,11 +585,19 @@ event loop
   }//protected void print(String something)
    //------------------------------------------------------------------
   @Override
-  public void error(String aMessage) 
+  public void error(String aMessage)
   {
     print("Error:"+aMessage);
-  }//public void error(String aMessage) 
+  }//public void error(String aMessage)
 
+  /**
+   * debug
+   * @param aMessage
+   */
+  public void debug(String aMessage)
+  {
+    print("Debug:"+aMessage);
+  }//public void error(String aMessage)
   /**
    *
    * @param a
@@ -578,7 +632,7 @@ event loop
   @Override
    public void exit(String aMessage)
    {
-     
+
      System.out.println(aMessage);
      exit();
     }//public void die(String aMessag)
@@ -594,13 +648,13 @@ event loop
    }//public String ask()
    /**
     * in fact read a line...
-    * 
+    *
     * @param question a string to issue to prompts for an answer
-    * @param options more data, e.g. default value, a range selection, captions for range selection,  
-    * @return 
+    * @param options more data, e.g. default value, a range selection, captions for range selection,
+    * @return
     */
   @Override
-   public String ask(String question,HashMap<String,Object> options) 
+   public String ask(String question,HashMap<String,Object> options)
    {
       //for(Iterator<String> i = ((List<String>) values.get("select")).iterator() ; i.hasNext();) console.print("debug: "+i.next()+"\n");
      if(options.get("select") != null)
@@ -610,7 +664,7 @@ event loop
        question = "";
        List select = (List) options.get("select");
        List<String> captions = (List<String>) options.get("captions");
-       
+
        List selectCopy = new ArrayList<>();
        List captionsCopy = new ArrayList<>();
        if(defVal != null && defVal.length() > 0)
@@ -652,12 +706,12 @@ event loop
 	   }// try
 	   catch(NumberFormatException e)
 	   {
-	     System.out.println("no valid number: "+answer); 
+	     System.out.println("no valid number: "+answer);
 	     index = -1;
 	   }// catch(NumberFormatException e)
 	 }//else
        }// do
-       while(index < 0  || index >= select.size()); 
+       while(index < 0  || index >= select.size());
        answer = selectCopy.get(index)+"";
        return(answer);
      }// if(options.get("select") != null)
@@ -665,18 +719,18 @@ event loop
      else
        System.out.println("need to do something with the options:"+options);
      return(ask(question));
-   }//public String ask(String question,HashMap<String,.Object> options) 
+   }//public String ask(String question,HashMap<String,.Object> options)
    /** in fact read a line..
    * @param question
    * @param defaultValue.
    * @return */
   @Override
-   public String ask(String question,String defaultValue) 
+   public String ask(String question,String defaultValue)
    {
      String result = ask(question+"["+defaultValue+"]");
      if(result == null || result.equals("")) result = defaultValue;
      return(result);
-   }//public String ask(String question,HashMap<String,.Object> options) 
+   }//public String ask(String question,HashMap<String,.Object> options)
    //the sames and forcing numerical reading
 
   /**
@@ -690,7 +744,7 @@ event loop
     scanType = "numeric";
     return(ask(question));
    }// public String askNum(String question)
- 
+
   /**
    *
    * @param question
@@ -698,12 +752,12 @@ event loop
    * @return
    */
   @Override
-  public String askNum(String question,String defaultValue) 
+  public String askNum(String question,String defaultValue)
    {
     scanType = "numeric";
     return(ask(question,defaultValue));
    }// public String askNum(String question)
- 
+
   /**
    *
    * @param question
@@ -711,17 +765,17 @@ event loop
    * @return
    */
   @Override
-  public String askNum(String question,HashMap<String,Object> options) 
+  public String askNum(String question,HashMap<String,Object> options)
    {
     scanType = "numeric";
     return(ask(question,options));
-   }// public String askNum(String question,HashMap<String,Object> options) 
+   }// public String askNum(String question,HashMap<String,Object> options)
   /** Load a filename, parse it and instantiate the correkt elements, using
    * the Member datastring MemberClassName for the instantiation, generic
    * code that is able to load JournalEintrag, as well as KontoEintrag or
    * Currencies...
-   * 
-   * @param baseName 
+   *
+   * @param baseName
    */
   public void load(String baseName )
   {
@@ -736,20 +790,20 @@ event loop
   }// public void save()
   @Override
    public boolean isRunning() { return(running);}
-    /** 
-     * set Locale set the locale for this app 
-     * 
-     * @param m 
+    /**
+     * set Locale set the locale for this app
+     *
+     * @param m
      */
   @Override
     public void setLocale(Locale m)
     {
     messageHandler.setLocale(m);
     }// public void setLocale(Locale m)
-  /** 
+  /**
    * a tag is missing in the db, add one per default, and save the base?
    TODO should search for all languages and add to their respective files the new tag...?
-   * 
+   *
    * @param m fnmae  String the tag to add
    */
   @Override
@@ -766,12 +820,71 @@ event loop
      *
      *  feedCmds
      *
-     * @param cmds 
-     * @return 
+     * @param cmds
+     * @return
      */
   @Override
     public HashMap<String,CommandI> feedCmds(HashMap<String,CommandI> cmds)
     {
       return(cmdParser.feedCmds(cmds));
     }// public HashMap<String,CommandI> feedCmds(HashMap<String,CommandI> cmds)
+    private void pushPrompt(String question)
+    {
+      debug("pushing "+get("prompt")+ " in favour of "+question);
+      promptStack.push(prompt());
+      prompt(question);
+     }//private void pushPrompt(String question)
+  @Override
+  public void setParent(ShellI s)
+  {
+    parentShell = s;
+if (parentShell != null)
+    {
+      parentShell.setChild(this);
+}
+  }
+
+  @Override
+  public void setChild(ShellI actShell)
+  {
+    // seems no need for this if (childShell != null) childShell.setInOut(null, null);
+
+    childShell = actShell;
+		if (childShell != null)
+    {
+      debug( "diverting in out ot childshell");
+      //childShell.setInOut(in, out);
+}
+  }
+
+  @Override
+  public ShellI rmChild()
+  {
+    ShellI result = childShell;
+		//seems there's no need to remove the listener if (childShell != null) childShell.setInOut(null, null);
+		childShell = null;
+
+    prompt();
+return result;
+  }
+
+  @Override
+  public void parseMode(String mode)
+  {
+    cmdParser.parseMode(mode);
+  }
+
+  @Override
+  public void clearCmds()
+  {
+    cmdParser.clearCmds();
+  }
+
+  @Override
+  public void setInputMode(boolean modeName)
+  {
+//    if (watcher == null) watcher = new ShellTextWatcher();
+//		watcher.setOverwrite(overwrite);
+//if (in != null) in.addTextChangedListener(watcher);
+  }
 }//public class Shell
