@@ -88,4 +88,15 @@ public  interface CommandParserI //extends com.gnu.jtrader.EventGeneratorI
    * @return 
    */
   public String help();
+
+  /**
+   * set the mode of parsing, e.g. tokenized, character etc...
+   * @param p0
+   */
+  public void parseMode(String p0);
+
+  /**
+   * remove all commands
+   */
+  public void clearCmds();
 }

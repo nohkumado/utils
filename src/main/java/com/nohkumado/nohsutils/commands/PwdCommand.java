@@ -75,7 +75,7 @@ public class PwdCommand extends Command implements CommandI
     String pwd = (String)shell.ressource("pwd");
     if(pwd == null ) pwd = System.getProperty("user.dir");
     else if(pwd.length() <= 0 ) pwd = System.getProperty("user.dir");
-    shell.ressource("pwd",pwd);
+    shell.get("pwd",pwd);
     return(pwd);
   }//end execute
   /**

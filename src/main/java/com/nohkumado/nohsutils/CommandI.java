@@ -34,6 +34,7 @@
  */
 package com.nohkumado.nohsutils;
 import java.util.*;
+import java.util.regex.Pattern;
 //import com.gnu.utils.*;
 
 /**
@@ -98,5 +99,18 @@ public interface CommandI extends Cloneable
    * @return
    */
   public Object clone(); //?? should be added by the cloning interface??
+
+  /**
+   * pattern notably for the char parser
+   * @return
+   */
+  public Pattern pattern();
+
+  /**
+   * command expansion, eventually argument expasion
+   * @param actArg
+   * @return
+   */
+  public String expand(String actArg);
 
 }//public class CommandI

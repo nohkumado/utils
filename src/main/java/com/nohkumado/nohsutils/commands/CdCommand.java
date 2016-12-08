@@ -80,14 +80,14 @@ public class CdCommand extends Command implements Cloneable, CommandI
 	String pwd = (String)shell.ressource("pwd");
 	if(pwd == null ) pwd = System.getProperty("user.dir");
 	else if(pwd.length() <= 0 ) pwd = System.getProperty("user.dir");
-	shell.ressource("pwd",pwd);
+	shell.get("pwd",pwd);
 	path = pwd+System.getProperty("file.separator")+path;
       }// else
 
       File newDir = new File(path);
       if(newDir.exists())
       {
-	if(newDir.isDirectory()) shell.ressource("pwd",newDir.getAbsolutePath());
+	if(newDir.isDirectory()) shell.get("pwd",newDir.getAbsolutePath());
 	else result += shell.msg("not_a_dir");
       }// if(newDir.exists())
       else result += shell.msg("does_not_exist");

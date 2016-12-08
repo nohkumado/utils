@@ -79,7 +79,7 @@ public class SetCommand extends Command implements CommandI
     if(!"".equals(name))
     {
       result += name + " : ";
-      if(!"".equals(value)) shell.ressource(name, value);
+      if(!"".equals(value)) shell.get(name, value);
       if(shell.ressource(name) != null)
 	result += shell.ressource(name)+"\n";
       else result += shell.get(name)+"\n";

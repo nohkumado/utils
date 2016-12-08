@@ -21,7 +21,6 @@ package com.nohkumado.nohsutils;
 
 //import com.gnu.utils.*;
 import java.util.*;
-import java.util.regex.*;
 
 /**
  * takes a line of text and tries to split it by hash value
@@ -42,6 +41,7 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
    * the reference to the active shell
    */
   protected ShellI shell = null;
+  public static final String TAG = "CmdP";
 
   /**
    *
@@ -105,8 +105,26 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
   @Override
   public ArrayList<CommandI> parse(String line)
   {
+    return parse(line, true);
+  }
+
+  /**
+   * parse
+   *
+   * @param line
+   * @param strictParse
+   * @return
+   */
+  public ArrayList<CommandI> parse(String line, boolean strictParse)
+  {
     ArrayList<CommandI> resultStack = new ArrayList<>();
     boolean stillToParse = false;
+    String lastprompt = shell.prompt();
+    if (lastprompt != null)
+    {
+      line = line.replace(lastprompt, "").trim();
+    }
+
     do
     {
       //maybe this isnt needed as long as no command is found the help is called anyway TODO
@@ -114,7 +132,10 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
       {
         System.out.println(" = help " + line);
         help();
-        return (resultStack);
+        if (strictParse)
+        {
+          return (resultStack);
+        }
       }
       //if(line.matches("^help") || line.matches("^h$") || line.matches("^\\?")) { System.out.println(" = help "+line);help(); return(resultStack);}
       //System.out.println("parsing : "+line);
@@ -141,7 +162,26 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
         {
           //if(mode == null || mode == "tokenized")
           case "tokenized":
-            if (line.matches("^(\\S+)\\s*$"))
+            TokenParser parser = new TokenParser(this);
+            if (strictParse && !parser.parse(line, resultStack))
+            {
+              if (parser.errorCode() == TokenParser.UNPARSED_ARGS)
+              {
+                StringBuilder sb = new StringBuilder();
+                sb.append(shell.msg("syntax_error"));
+                sb.append(" ");
+                sb.append(shell.msg("cmd_command"));
+                sb.append(" ");
+                sb.append(parser.errorCmd());
+                sb.append(" ");
+                sb.append(shell.msg("cmd_unparsed_args"));
+                sb.append(" ");
+                sb.append(parser.errorMsg());
+
+                shell.print(sb.toString());
+              }
+            }
+            /*if (line.matches("^(\\S+)\\s*$"))
             {
               line = line.trim();
               //dont forget to call the parse method of the command  need to split it up TODO BTW here we add the parsing ehm... since the Commands hold the shell, thew dont need to get the heap explicitely, no?
@@ -182,9 +222,32 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
               {
                 System.out.println("failure of tokenized parsing of " + line);
               }
-            }//else
+            }//else*/
+
             break;
           //else if(mode == "vilike")
+          case "char":
+
+            CharParser cparser = new CharParser(this);
+            if (strictParse && !cparser.parse(line, resultStack))
+            {
+              if (cparser.errorCode() == cparser.UNPARSED_ARGS)
+              {
+                StringBuilder sb = new StringBuilder();
+                sb.append(shell.msg("syntax_error"));
+                sb.append(" ");
+                sb.append(shell.msg("cmd_command"));
+                sb.append(" ");
+                sb.append(cparser.errorCmd());
+                sb.append(" ");
+                sb.append(shell.msg("cmd_unparsed_args"));
+                sb.append(" ");
+                sb.append(cparser.errorMsg());
+
+                shell.print(sb.toString());
+              }
+            }
+            break;
           case "vilike":
             System.out.println("please provide an implementation for this parsing mode");
             break;
@@ -305,4 +368,16 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
     }//if(matchingKeys.size() > 1)
     return (null);
   }//protected CommandI findCmd(String token)
+
+  @Override
+  public void parseMode(String mode)
+  {
+    shell.get("parsing", mode);
+  }
+
+  @Override
+  public void clearCmds()
+  {
+    commands.clear();
+  }
 }//public class CmdLineParser
