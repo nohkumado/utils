@@ -4,8 +4,6 @@
 package com.nohkumado.nohsutils.test;
 
 import com.nohkumado.nohsutils.*;
-import java.math.*;
-import java.util.*;
 
 /**
  * @author bboett
@@ -17,7 +15,9 @@ public class UtilsTester
     /** 
      * 
      * 
-     * @param toCheck 
+   * @param result
+   * @param msg
+   * @return 
      */
     public static boolean doTrans(boolean result, String msg)
     {
@@ -37,7 +37,8 @@ public class UtilsTester
     /** 
      * 
      * 
-     * @param toCheck 
+   * @param status
+   * @return 
      */
     public static boolean doTrans(ReturnValue status)
     {

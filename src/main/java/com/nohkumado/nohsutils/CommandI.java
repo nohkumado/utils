@@ -36,6 +36,10 @@ package com.nohkumado.nohsutils;
 import java.util.*;
 //import com.gnu.utils.*;
 
+/**
+ *
+ * @author nohkumado
+ */
 public interface CommandI extends Cloneable
 {
     /** 
@@ -51,7 +55,8 @@ public interface CommandI extends Cloneable
      *
      * set the name of this command
      * 
-     * @return the name of this item as a string
+     * set the name of this item as a string
+   * @param n
      */
     public void name(String n);
     /**
@@ -59,9 +64,7 @@ public interface CommandI extends Cloneable
       execute
 
       activate this command
-
-     * @param line 
-     * @param heap 
+ 
      * @return 
      */
     public String execute();
@@ -78,8 +81,7 @@ public interface CommandI extends Cloneable
     /** 
      * instead of parsing the options, give them directly, eg when invoking a command from the program code directly
      * 
-     * @param parms the hashtable with the options
-     * @param parms 
+     * @param parms the hashtable with the options 
      */
     public void setParameters(HashMap<String,Object> parms);
     /**
@@ -87,9 +89,14 @@ public interface CommandI extends Cloneable
       help
 
       issue the help message associated with this command
-
+   * @return
 */
     public String help();
-    public Object clone(); //?? should be added by the cloning interface??
+
+  /**
+   *
+   * @return
+   */
+  public Object clone(); //?? should be added by the cloning interface??
 
 }//public class CommandI

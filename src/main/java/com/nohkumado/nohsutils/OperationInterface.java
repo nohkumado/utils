@@ -43,14 +43,24 @@ public interface  OperationInterface
 
     retourne une forme en forme de chaines de caractères de cette liste
     l'argument optionnel donne l'ordre et les colonnes à sortir
+   * @return 
    */
+  @Override
   public String toString();
   /**
 
     applique
 
     applique l'operation et génère la ou les lignes de journal
+   * @param shell
+   * @param dynamicVars
+   * @return 
    */
   public List applique(ShellI shell,HashMap<String,Object> dynamicVars);
+
+  /**
+   *
+   * @return
+   */
   public String name();
 } // end class OperationInterface 

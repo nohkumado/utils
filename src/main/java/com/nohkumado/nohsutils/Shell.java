@@ -31,12 +31,21 @@
 package com.nohkumado.nohsutils;
 
 //import com.gnu.utils.*;
+import com.nohkumado.nohsutils.commands.CdCommand;
+import com.nohkumado.nohsutils.commands.LsCommand;
+import com.nohkumado.nohsutils.commands.PwdCommand;
+import com.nohkumado.nohsutils.commands.QuitCommand;
+import com.nohkumado.nohsutils.commands.SetCommand;
 import java.io.*;
 import java.util.*;
 
-public class Shell extends ConfigUser implements Cloneable,ShellI
+/**
+ * Shell
+ * @author nohkumado
+ */
+public class Shell extends ConfigUser implements ShellI
 {
-  protected HashMap<String,Object> environment = new HashMap<String,Object>();
+  protected HashMap<String,Object> environment = new HashMap<>();
   protected MessageUser messageUser = new MessageUser();
   protected MessageHandlerInterface messageHandler = null;
   protected CommandParserI cmdParser = null;
@@ -47,8 +56,39 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
   protected boolean running = true;
   protected String scanType = null;
 
-  /** CTOR
+  /** 
+   * CTOR
+*/
+  //public Shell(CmdLineParserI p)
+  public Shell()
+  {
+    super();
 
+    setConfHandler(new ConfigHandler());
+    setI8nHandler(new MessageHandler(configHandler));
+    
+     cmdParser = new CmdLineParser(configHandler, messageHandler);
+    
+    cmdParser.shell(this);
+    
+
+    ArrayList<CommandI> cmds = new ArrayList<CommandI>();
+    cmds.add(new CdCommand(this));
+    cmds.add(new LsCommand(this));
+    cmds.add(new PwdCommand(this));
+    cmds.add(new QuitCommand(this));
+    cmds.add(new SetCommand(this));
+    
+    
+    cmdParser.feedCmds(cmds);
+    
+    in = System.in;
+    ressource("shell",this);
+    }// public Shell()
+  /** CTOR
+   * @param p
+   * @param c
+   * @param m
    */
   //public Shell(CmdLineParserI p)
   public Shell(CommandParserI p, ConfigHandlerInterface c, MessageHandlerInterface m)
@@ -61,6 +101,12 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
     ressource("shell",this);
     messageUser.setI8nHandler(m);
   }// public Shell()
+
+  /**
+   * Shell 
+   * @param c
+   * @param m
+   */
   public Shell(ConfigHandler c, MessageHandler m)
   {
     this(null,c,m);
@@ -70,8 +116,9 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
     init
 
     after instantiation initialisation
-
+   * @return
    */
+  @Override
   public boolean init()
   {
     if(ressource("prompt") == null) ressource("prompt","> ");
@@ -83,27 +130,28 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
 
     this Method is the one that catches the commands and interprets them
     should copy some parts of nSim:lineShell concerning batches!
-
+   * @param line
+   * @return
    */
+  @Override
   public String process(String line)
   {
     //TODO check if shell is allready running otherwise push into a TODO stack
     String retVal = "";
      ArrayList<CommandI> toWorkOf = cmdParser.parse(line);
      if(toWorkOf.size() > 0) 
-       for(Iterator<CommandI> i = toWorkOf.iterator(); i.hasNext();)
-       {
-	 CommandI aCmd = i.next();
-	 if(aCmd != null) 
-	 {
-	   //System.out.println("abpout to exe: "+aCmd);
-	   retVal = aCmd.execute();
-	   if(retVal != "") print(retVal);
-	   //System.out.println("retVal = "+retVal);
-	 }//if(aCmd != null) 
-	 else
-	   retVal= "cmd was null??";
-       }//for(Iterator<CommandI> i = toWorkOf.iterator(); i.hasNext();)
+       for (CommandI aCmd : toWorkOf) {
+         if(aCmd != null)
+         {
+           //System.out.println("abpout to exe: "+aCmd);
+           retVal = aCmd.execute();
+           if(retVal != "") print(retVal);
+           //System.out.println("retVal = "+retVal);
+         }//if(aCmd != null)
+         else
+           retVal= "cmd was null??";
+    } //for(Iterator<CommandI> i = toWorkOf.iterator(); i.hasNext();)
+    
     return(retVal);
   }//end process
   /**
@@ -114,7 +162,11 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
     should copy some parts of nSim:lineShellI concerning batches!
 
     this one is for internal use, when invoking commands through the shell programmately, so no command parsing is needed, parameters are in a hastable
+   * @param line
+   * @param parm
+   * @return 
    */
+  @Override
   public String process(String line,HashMap<String,Object> parm)
   {
     //TODO check if shell is allready running otherwise push into a TODO stack
@@ -165,10 +217,9 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
               \[     begin a sequence of non-printing characters, which  could  be  used  to  embed  a  terminal  control
                      sequence into the prompt
               \]     end a sequence of non-printing characters
-
-
-
+   * @return
    */
+  @Override
   public String prompt()
   {
     String prompt = (String) ressource("prompt");
@@ -190,6 +241,7 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
    * 
    * @param p 
    */
+  @Override
   public void prompt(String p) { ressource("prompt", p); }
   /**
 
@@ -199,6 +251,7 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
 
 
    */
+  @Override
   public void exit()
   {
     settings.remove("pwd");
@@ -212,8 +265,9 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
    TODO check with the other projects here a confusion between settings from config handler which are stored betweend sessions and local vars that should be dropped::::
    * 
    * @param envname 
-   * @param envname 
+   * @return  
    */
+  @Override
   public java.lang.Object ressource(String envname)
   {
     //TODO somehow check if a ressource change needs to trigger something e.g. chanign the basename requires reloading of the data...
@@ -221,7 +275,7 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
     //TODO need to separate settings from environment, the same as shellvars are separated from global vars,,,,,
     //need a set method in shell diffreent from ressource....
     //if(settings.get(envname,null) != null) return(settings.get(envname,null));
-    else if(envname != null && envname != "") return(environment.get(envname));
+    else if(!"".equals(envname)) return(environment.get(envname));
     else return(null);
   }// public Object ressource(String envname)
   /** 
@@ -230,6 +284,7 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
    * equivalent to the rm environment variables of a shell....
    * 
    * @param envname 
+   * @return  
    */
   public java.lang.Object rmRessource(String envname)
   {
@@ -248,9 +303,9 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
    * equivalent to the environment variables of a shell....
    * 
    * @param envname 
-   * @param envname 
    * @return the objet of the setting to get
    */
+  @Override
   public java.lang.Object get(String envname)
   {
     if(envname == null) return(settings);
@@ -263,13 +318,14 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
    * equivalent to the environment variables of a shell....
    * 
    * @param envname 
-   * @param envname 
+   * @param obj 
    */
+  @Override
   public void ressource(String envname, Object obj)
   {
     environment.put(envname, obj);
     if(obj instanceof String) settings.put(envname,(String) obj);
-    else if(obj instanceof Integer) settings.putInt(envname,((Integer) obj).intValue());
+    else if(obj instanceof Integer) settings.putInt(envname, ((Integer) obj));
     environment.put(envname,obj);
     //TODO and the rest
   }// public Object ressource(String envname)
@@ -278,18 +334,22 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
    * 
    * @return 
    */
+  @Override
   public String help()
   {
 
     return("");
   }//end help
+  @Override
   public void setI8nHandler(MessageHandlerInterface m)
-  {
-
+  {   
+    messageHandler = m;
+    messageUser.setI8nHandler(m);
   }// public void setI8nHandler(MessageHandlerInterface m)
+  @Override
   public MessageHandlerInterface getI8nHandler()
   {
-    return(null); 
+    return(messageHandler); 
   }// public MessageHandlerInterface getI8nHandler()
   /** 
    * returns the message associated with a token
@@ -297,6 +357,7 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
    * @param m 
    * @return 
    */
+  @Override
   public String msg(String m)
   {
     return(messageUser.msg(m));
@@ -305,6 +366,7 @@ public class Shell extends ConfigUser implements Cloneable,ShellI
 run: 
 event loop 
    */
+  @Override
  public void run()
  {
    /** if necessary issue the prompt a first time!*/
@@ -317,24 +379,24 @@ event loop
      if(!batchMode) writeStream(prompt());
      ArrayList<CommandI> toWorkOf = cmdParser.parse(read());
      if(toWorkOf.size() > 0) 
-       for(Iterator<CommandI> i = toWorkOf.iterator(); i.hasNext();)
-       {
-	 CommandI aCmd = i.next();
-	 if(aCmd != null) 
-	 {
-	   //System.out.println("abpout to exe: "+aCmd);
-	   String retVal = aCmd.execute();
-	   if(retVal != "") print(retVal);
-	   //System.out.println("retVal = "+retVal);
-	 }//if(aCmd != null) 
-	 else
-	   System.out.println("cmd was null??");
-       }//for(Iterator<CommandI> i = toWorkOf.iterator(); i.hasNext();)
+       for (CommandI aCmd : toWorkOf) {
+         if(aCmd != null)
+         {
+           //System.out.println("abpout to exe: "+aCmd);
+           String retVal = aCmd.execute();
+           if(!"".equals(retVal)) print(retVal);
+           //System.out.println("retVal = "+retVal);
+         }//if(aCmd != null)
+         else
+           System.out.println("cmd was null??");
+     } //for(Iterator<CommandI> i = toWorkOf.iterator(); i.hasNext();)
+     
    }//while (running == true) 
  }//public void run()
   /**
   read: 
   read a line of commands
+   * @return 
    */
   public String read()
   {
@@ -389,6 +451,11 @@ event loop
     return(inputLine);
   }//end private String ReadFile(FileInputStream a)
   //------------------------------------------------------------------
+
+  /**
+   * fedThroughString
+   * @param aBatch
+   */
   public void fedThroughString(String aBatch)
   {
     in = new StringBufferInputStream(aBatch);
@@ -400,6 +467,11 @@ event loop
     batchMode = true;
   }//public void fedThroughFile(String aFile)
   //------------------------------------------------------------------
+
+  /**
+   *
+   * @param aFile
+   */
   public void fedThroughFile(String aFile)
   {
     /** open the file, else exit */
@@ -424,6 +496,11 @@ event loop
     batchMode = true;
   }//public void fedThroughFile(String aFile)
   //------------------------------------------------------------------
+
+  /**
+   *
+   * @param s
+   */
   public void writeStream(Object s)
   {
     print(s);
@@ -442,11 +519,17 @@ event loop
 
   }// public void writeStream(Object s)
   //------------------------------------------------------------------
+
+  /**
+   *
+   * @param something
+   */
   protected void print(Object something)
   {
      print(something.toString());
   }//protected void print(String something)
   //------------------------------------------------------------------
+  @Override
   public void print(String something)
   {
      try
@@ -455,17 +538,44 @@ event loop
      { exit (""+e);}
   }//protected void print(String something)
    //------------------------------------------------------------------
+  @Override
   public void error(String aMessage) 
   {
     print("Error:"+aMessage);
   }//public void error(String aMessage) 
-   protected void setInputStream(InputStream a) { in = a; }
-   protected InputStream getInputStream() { return in; }
+
+  /**
+   *
+   * @param a
+   */
+  protected void setInputStream(InputStream a) { in = a; }
+
+  /**
+   *
+   * @return
+   */
+  protected InputStream getInputStream() { return in; }
    //------------------------------------------------------------------
    //protected void setOutputStream(OutputStream a) { out = a; lstContent = ""; }
+
+  /**
+   *
+   * @param a
+   */
    protected void setOutputStream(OutputStream a) { out = a; }
-   protected OutputStream getOutputStream() { return out; }
+
+  /**
+   *
+   * @return
+   */
+  protected OutputStream getOutputStream() { return out; }
    //------------------------------------------------------------------
+
+  /**
+   *
+   * @param aMessage
+   */
+  @Override
    public void exit(String aMessage)
    {
      
@@ -473,7 +583,10 @@ event loop
      exit();
     }//public void die(String aMessag)
    //------------------------------------------------------------------
-   /** in fact read a line...*/
+   /** in fact read a line..
+   * @param question.
+   * @return */
+  @Override
    public String ask(String question)
    {
      if(question.length() > 0) print(question+" ");
@@ -486,6 +599,7 @@ event loop
     * @param options more data, e.g. default value, a range selection, captions for range selection,  
     * @return 
     */
+  @Override
    public String ask(String question,HashMap<String,Object> options) 
    {
       //for(Iterator<String> i = ((List<String>) values.get("select")).iterator() ; i.hasNext();) console.print("debug: "+i.next()+"\n");
@@ -497,8 +611,8 @@ event loop
        List select = (List) options.get("select");
        List<String> captions = (List<String>) options.get("captions");
        
-       List selectCopy = new ArrayList<String>();
-       List captionsCopy = new ArrayList<String>();
+       List selectCopy = new ArrayList<>();
+       List captionsCopy = new ArrayList<>();
        if(defVal != null && defVal.length() > 0)
        //if(defVal != null && defVal.length() > 0 && !defVal.equals("null"))
        {
@@ -534,7 +648,7 @@ event loop
 	 {
 	   try
 	   {
-	     index = (new Integer(answer)).intValue();
+	     index = (new Integer(answer));
 	   }// try
 	   catch(NumberFormatException e)
 	   {
@@ -552,7 +666,11 @@ event loop
        System.out.println("need to do something with the options:"+options);
      return(ask(question));
    }//public String ask(String question,HashMap<String,.Object> options) 
-   /** in fact read a line...*/
+   /** in fact read a line..
+   * @param question
+   * @param defaultValue.
+   * @return */
+  @Override
    public String ask(String question,String defaultValue) 
    {
      String result = ask(question+"["+defaultValue+"]");
@@ -560,17 +678,40 @@ event loop
      return(result);
    }//public String ask(String question,HashMap<String,.Object> options) 
    //the sames and forcing numerical reading
+
+  /**
+   *
+   * @param question
+   * @return
+   */
+  @Override
    public String askNum(String question)
    {
     scanType = "numeric";
     return(ask(question));
    }// public String askNum(String question)
-   public String askNum(String question,String defaultValue) 
+ 
+  /**
+   *
+   * @param question
+   * @param defaultValue
+   * @return
+   */
+  @Override
+  public String askNum(String question,String defaultValue) 
    {
     scanType = "numeric";
     return(ask(question,defaultValue));
    }// public String askNum(String question)
-   public String askNum(String question,HashMap<String,Object> options) 
+ 
+  /**
+   *
+   * @param question
+   * @param options
+   * @return
+   */
+  @Override
+  public String askNum(String question,HashMap<String,Object> options) 
    {
     scanType = "numeric";
     return(ask(question,options));
@@ -585,18 +726,22 @@ event loop
   public void load(String baseName )
   {
   }//public boolean load(String baseName)
+  @Override
   public void load()
   {
   }//public boolean load(String baseName)
+  @Override
   public void save()
   {
   }// public void save()
+  @Override
    public boolean isRunning() { return(running);}
     /** 
      * set Locale set the locale for this app 
      * 
      * @param m 
      */
+  @Override
     public void setLocale(Locale m)
     {
     messageHandler.setLocale(m);
@@ -605,12 +750,14 @@ event loop
    * a tag is missing in the db, add one per default, and save the base?
    TODO should search for all languages and add to their respective files the new tag...?
    * 
-   * @param fnmae  String the tag to add
+   * @param m fnmae  String the tag to add
    */
+  @Override
   public void addTag(String m)
   {
     messageHandler.addTag(m);
   }// public void addTag(String m)
+  @Override
   public ResourceBundle getI8nBoundle()
   {
     return(messageHandler.getI8nBoundle());
@@ -622,6 +769,7 @@ event loop
      * @param cmds 
      * @return 
      */
+  @Override
     public HashMap<String,CommandI> feedCmds(HashMap<String,CommandI> cmds)
     {
       return(cmdParser.feedCmds(cmds));

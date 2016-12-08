@@ -32,19 +32,29 @@
 package com.nohkumado.nohsutils.commands;
 import com.nohkumado.nohsutils.*;
 
-public class PwdCommand extends Command implements Cloneable, CommandI
+/**
+ *
+ * @author nohkumado
+ */
+public class PwdCommand extends Command implements CommandI
 {
   /**
     CTOR
 
     Build up a reference
-
+   * @param s
    */
   public PwdCommand(ShellI s)
   {
     super(s);
   }// public Command()
 
+  /**
+   *
+   * @param s
+   * @param n
+   * @param struct
+   */
   public PwdCommand(ShellI s,String n,MessageUser struct)
   {
     super(s,n,struct);
@@ -55,10 +65,10 @@ public class PwdCommand extends Command implements Cloneable, CommandI
 
     activate this command
 
-   * @param line 
-   * @param heap 
+ 
    * @return 
    */
+  @Override
   public String execute()
   {
     String result = "";
@@ -75,6 +85,7 @@ public class PwdCommand extends Command implements Cloneable, CommandI
     issue the help message associated with this command
 
    */
+  @Override
   public String help()
   {
     return(shell.msg("pwd")+" "+shell.msg("to_display_actual_working_directory")+"\n");
@@ -84,6 +95,7 @@ public class PwdCommand extends Command implements Cloneable, CommandI
    * 
    * @return 
    */
+  @Override
   public Object clone()
   {
     //beware! shallow copy! if you command has some arrays or other deep structures, only the ref will be copied!

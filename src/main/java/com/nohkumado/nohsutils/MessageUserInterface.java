@@ -40,8 +40,24 @@ package com.nohkumado.nohsutils;
 public interface MessageUserInterface
 {
   //----------------------------------------------
+
+  /**
+   *
+   * @param m
+   * @return
+   */
   public String msg(String m);
+
+  /**
+   *
+   * @param m
+   */
   public void setI8nHandler(MessageHandlerInterface m);
+
+  /**
+   *
+   * @return
+   */
   public MessageHandlerInterface getI8nHandler();
 }//public interface MessageUserInterface
 

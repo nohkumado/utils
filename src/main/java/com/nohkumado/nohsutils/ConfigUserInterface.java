@@ -36,11 +36,12 @@
 
 package com.nohkumado.nohsutils;
 
-import java.util.*;
-import java.util.regex.*;
 import java.util.prefs.*;
-import java.math.*;
 
+/**
+ *
+ * @author nohkumado
+ */
 public interface ConfigUserInterface extends MessageUserInterface,Cloneable
 {
 
@@ -75,6 +76,7 @@ second hash: template for  object
      * @param value its value
      TODO should mirror/delegate the system of the Preferences object
      with getInt etc
+   * @return 
 */
     public Object setting(String key, Object value);
     /**
@@ -85,6 +87,7 @@ second hash: template for  object
       settings without disturbing the rest of the program+++
 
      * @param key the token correspnding to the var name
+   * @return 
 */
     public Object setting(String key);
     /**
@@ -122,12 +125,12 @@ second hash: template for  object
 
       set the reference on the config handler, allows the element to retrieve its
       specific parts of the settings
-
-
+   * @return
 */
     public ConfigHandlerInterface getConfHandler();
     /** 
      * 
+   * @return 
      */
     public String version();
     /**
@@ -135,7 +138,8 @@ second hash: template for  object
       init
 
       initialisation, notamment on lui passe le système de messages
-
+   * @param args
+   * @return 
 */
     public Preferences init(Preferences args);
     /**
@@ -144,7 +148,7 @@ second hash: template for  object
 
       setter/getter for the type of  object, useful forthe section of settings
       thing fetches as subsettings
-
+   * @param argument
     */
     public void type(String argument);
     /**
@@ -153,7 +157,7 @@ second hash: template for  object
 
       setter/getter for the type of  object, useful forthe section of settings
       thing fetches as subsettings
-
+   * @return
     */
     public String type();
 }//public class ConfigUserInterface implements Cloneable

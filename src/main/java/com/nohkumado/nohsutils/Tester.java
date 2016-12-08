@@ -3,20 +3,20 @@
  */
 package com.nohkumado.nohsutils;
 
-import java.math.*;
-import java.util.*;
-
 /**
  * @author bboett
  * 
  */
 public class Tester
 {
+  /** name of tst*/
     protected static String testName = "Tester";
     /** 
      * 
      * 
-     * @param toCheck 
+   * @param result
+   * @param msg
+   * @return 
      */
     public static boolean doTrans(boolean result, String msg)
     {
@@ -36,7 +36,8 @@ public class Tester
     /** 
      * 
      * 
-     * @param toCheck 
+   * @param status
+   * @return 
      */
     public static boolean doTrans(ReturnValue status)
     {

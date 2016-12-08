@@ -34,6 +34,10 @@ import java.io.*;
 import java.util.regex.*;
 import com.nohkumado.nohsutils.*;
 
+/**
+ *
+ * @author nohkumado
+ */
 public class LsCommand extends Command implements Cloneable, CommandI
 {
   protected String path = "";
@@ -42,13 +46,19 @@ public class LsCommand extends Command implements Cloneable, CommandI
     CTOR
 
     Build up a reference
-
+   * @param s
    */
   public LsCommand(ShellI s)
   {
     super(s);
   }// public Command()
 
+  /**
+   *
+   * @param s
+   * @param n
+   * @param struct
+   */
   public LsCommand(ShellI s,String n,MessageUser struct)
   {
     super(s,n,struct);
@@ -58,11 +68,10 @@ public class LsCommand extends Command implements Cloneable, CommandI
     execute
 
     activate this command
-
-   * @param line 
-   * @param heap 
+ 
    * @return 
    */
+  @Override
   public String execute()
   {
     String result = "";
@@ -100,6 +109,7 @@ public class LsCommand extends Command implements Cloneable, CommandI
    * @param line 
    * @return 
    */
+  @Override
   public String parse(String line)
   {
     path = "";
@@ -141,11 +151,13 @@ public class LsCommand extends Command implements Cloneable, CommandI
     issue the help message associated with this command
 
    */
+  @Override
   public String help()
   {
     return(shell.msg("ls")+" <"+shell.msg("path")+"> "+shell.msg("to_display_directory")+"\n");
   }//end help
   //make a copy of this object
+  @Override
   public Object clone()
   {
     LsCommand cloned = (LsCommand)super.clone();

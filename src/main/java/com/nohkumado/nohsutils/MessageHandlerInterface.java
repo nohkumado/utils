@@ -41,7 +41,7 @@ import java.util.*;
 public interface MessageHandlerInterface
 {
   //----------------------------------------------
-  
+  /** get bundle */
   public ResourceBundle getI8nBoundle();
   /** 
    * save the database in the native format of the implementation 
@@ -57,9 +57,14 @@ public interface MessageHandlerInterface
    * a tag is missing in the db, add one per default, and save the base?
    TODO should search for all languages and add to their respective files the new tag...?
    * 
-   * @param fnmae  String the tag to add
+   * @param m fnmae  String the tag to add
    */
     public void addTag(String m);
-    public void setLocale(Locale m);
+
+  /**
+   *
+   * @param m
+   */
+  public void setLocale(Locale m);
 }//public interface MessageHandlerInterface
 

@@ -29,22 +29,40 @@
 */
 package com.nohkumado.nohsutils;
 import java.util.*;
+
+/**
+ *
+ * @author nohkumado
+ */
 public  interface CommandParserI //extends com.gnu.jtrader.EventGeneratorI
 {
-  /** -------------------------- init --------------------------
+  /** -------------------------- feed Command --------------------------
    *
+   * @param cmds
+   * @return 
    */
   public  HashMap<String,CommandI>  feedCmds(HashMap<String,CommandI> cmds);
+  /** -------------------------- feed Command --------------------------
+   *
+   * @param cmds
+   * @return 
+   */
+  public  HashMap<String,CommandI>  feedCmds(ArrayList<CommandI> cmds);
   /** -------------------------- setRessource --------------------------
    *
+   * @param arg0
    */
   public void  setRessource (Properties arg0);
   /** -------------------------- formatProperties --------------------------
    *
+   * @param arg0
+   * @return 
    */
   public String  formatProperties (Properties arg0);
   /** -------------------------- parse --------------------------
    *
+   * @param line
+   * @return 
    */
   public ArrayList<CommandI> parse (String line);
    /** 
@@ -56,11 +74,18 @@ public  interface CommandParserI //extends com.gnu.jtrader.EventGeneratorI
    public CommandI findCmd(String token);
   /** -------------------------- getIntString --------------------------
    * setter/getter a reference on the actual shell
+   * @return 
    */
   public ShellI shell();
+
+  /**
+   *
+   * @param s
+   */
   public void shell(ShellI  s);
   /** -------------------------- getHelp --------------------------
    * compile the Help from the commands
+   * @return 
    */
   public String help();
 }

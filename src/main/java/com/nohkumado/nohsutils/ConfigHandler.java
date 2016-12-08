@@ -40,6 +40,10 @@ import java.util.*;
 import java.util.prefs.*;
 import java.util.regex.*;
 
+/**
+ *
+ * @author nohkumado
+ */
 public class ConfigHandler implements Cloneable,ConfigHandlerInterface
 {
   /** the internationalization stuff */
@@ -68,7 +72,7 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
 
 
     The constructor of a utils::configHandler object, initializes a number of datastructures that will be used later, creates a blessed reference
-
+   * @param base
    */
   public ConfigHandler(String base)
   {
@@ -77,6 +81,11 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
     if (settings != null) settings.put("baseName",base);
       //System.out.println("CTOR CH: default ");
   }// public void new·
+
+  /**
+   *
+   * @param settings
+   */
   public ConfigHandler(Preferences settings)
   {
     if (settings != null) 
@@ -92,8 +101,9 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
     init
 
     Here we really build up  object
-
+   * @return
    */
+  @Override
   public boolean init() 
   {
       //System.out.println("init CH: baseName: "+settings.get("baseName",null));
@@ -161,7 +171,9 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
 
     TODO, leave the non loaded actors settings away+++
     TODO hmmm with the migratin to the prefer"ences ssystem, i think e should drop this...
-
+   * @param fileName
+   * @return 
+   * @throws java.io.FileNotFoundException
    */
   public String loadSettings(String fileName) throws FileNotFoundException
   {
@@ -171,7 +183,7 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
     File confFile = new File(fileName);
     if(!confFile.exists()) return(unparsed);
     Scanner scanner = new Scanner(confFile);
-    String theLine = "";
+    String theLine;// = "";
     while(scanner.hasNextLine())
     {
       theLine = scanner.nextLine().trim();
@@ -198,8 +210,9 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
     dumpSettings 
 
     issue the actual settings of the bot
-
+   * @param hash
    */
+  @Override
   public String dumpSettings(Preferences hash)
   {
     String listing = "";
@@ -227,11 +240,15 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
 
     save actual bot settings to the conf file
     TODO with the prefs migration useless (to be checked)
-
+   * @param hash
    */
   public void saveSettings(HashMap<String, Object>hash)
   {
   }// public void saveSettings 
+
+  /**
+   *
+   */
   public void saveSettings()
   {
     saveSettings(null);
@@ -242,8 +259,9 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
 
     getter/setter for the hash of keys that should be accepted through shell
     arguments, if  isn't present any argument will be accepted+
-
+   * @param hash
    */
+  @Override
   public void setValidKeys(HashMap<String, Object>hash)
   {
     //if(hash && ref(hashref) eq 'HASH')
@@ -270,7 +288,8 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
     valid value following+
 
     TODO migrate to use of jopt
-
+   * @param argv
+   * @return 
    */
   protected Preferences parseArgs(String argv[])
   {
@@ -299,6 +318,7 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
     }//end if( argv.length > 0)
     return(settings);
   }//protected void parseArgs(String argv[])
+  @Override
   public void parseArgs(HashMap<String,Object>arguments)
   {
     //TODO tranlsate from perl
@@ -350,6 +370,7 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
     attribute+
 
    */
+  @Override
   public void fetchNext(HashMap<String,Object> arguments,boolean bool)
   {
 
@@ -369,6 +390,7 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
     issue the type of  object
 
    */
+  @Override
   public String est()
   {
     return  type;
@@ -379,10 +401,10 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
     TODO this should be changed.... when chnaging E;g the name of the conf file this should be inbtercepted, so the innards of the settings mechanism should be hidden....
 
     getter/setter for the hash of settings we are manipulating+
-
-   * @param Object>hash 
+   * @param hash 
    * @return 
    */
+  @Override
   public Preferences container(Preferences hash)
   {
     settings = hash;
@@ -396,6 +418,7 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
 
    * @return 
    */
+  @Override
   public Preferences container()
   {
     return(settings);

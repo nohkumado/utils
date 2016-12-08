@@ -33,20 +33,30 @@ package com.nohkumado.nohsutils.commands;
 import java.io.*;
 import com.nohkumado.nohsutils.*;
 
+/**
+ *
+ * @author nohkumado
+ */
 public class CdCommand extends Command implements Cloneable, CommandI
 {
-  protected String name = "", path = "";
+  protected String path = "";
   /**
     CTOR
 
     Build up a reference
-
+   * @param s
    */
   public CdCommand(ShellI s)
   {
     super(s);
   }// public Command()
 
+  /**
+   *
+   * @param s
+   * @param n
+   * @param struct
+   */
   public CdCommand(ShellI s,String n,MessageUser struct)
   {
     super(s,n,struct);
@@ -56,11 +66,10 @@ public class CdCommand extends Command implements Cloneable, CommandI
     execute
 
     activate this command
-
-   * @param line 
-   * @param heap 
+ 
    * @return 
    */
+  @Override
   public String execute()
   {
     String result = "";
@@ -97,6 +106,7 @@ public class CdCommand extends Command implements Cloneable, CommandI
      * @param line 
      * @return 
      */
+  @Override
     public String parse(String line)
     {
       if(line.matches(".."))
@@ -120,11 +130,13 @@ public class CdCommand extends Command implements Cloneable, CommandI
     issue the help message associated with this command
 
    */
+  @Override
   public String help()
   {
     return(shell.msg("set")+" "+name+" "+shell.msg("value")+" "+shell.msg("to_set_a_value")+"\n");
   }//end help
     //make a copy of this object
+  @Override
     public Object clone()
     {
 	//beware! shallow copy! if you command has some arrays or other deep structures, only the ref will be copied!

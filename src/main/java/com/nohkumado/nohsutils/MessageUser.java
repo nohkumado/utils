@@ -21,84 +21,95 @@
  * ANY DAMAGES, INCLUDING ANY LOST PROFITS OR OTHER INCIDENTAL OR 
  * CONSEQUENTIAL DAMAGES RELATING  TO THE SOFTWARE.
  */
-
-/** DESCRIPTION:
- * 
+/**
+ * DESCRIPTION:
+ *
  * @author Bruno Boettcher
  * @author Email: bboett@adlp.org
  */
 package com.nohkumado.nohsutils;
+
 import java.util.*;
 
-
-/** 
+/**
  * interface for all grid types
- * 
+ *
  * @author Bruno Boettcher
  * @version $Revision: 1.1 $
  */
 //public class MessageUser extends JComponent implements MouseListener 
 public class MessageUser implements MessageUserInterface
 {
-  protected MessageHandlerInterface messageHandler = null;
-  protected ResourceBundle msg = null;
-  //----------------------------------------------
-  /** 
-   * msg 
-   *
-   * here only a dummy until i backport the stuff i made in perl, fetching the messages
-   * from an xml ressourcefile
-   * 
-   * @param m 
-   * @return 
+
+  /**
+   * message handler
    */
+  protected MessageHandlerInterface messageHandler = null;
+  /**
+   * bundle
+   */
+  protected ResourceBundle msg = null;
+
+  //----------------------------------------------
+  /**
+   * msg
+   *
+   * here only a dummy until i backport the stuff i made in perl, fetching the
+   * messages from an xml ressourcefile
+   *
+   * @param m
+   * @return
+   */
+  @Override
   public String msg(String m)
   {
     String result = "";
     try
     {
-      return(msg.getString(m));
+      return (msg.getString(m));
     }// try
-    catch(MissingResourceException e)
+    catch (MissingResourceException e)
     {
       try
       {
-	messageHandler.addTag(m);
+        messageHandler.addTag(m);
       }// try
-      catch(NullPointerException p)
+      catch (NullPointerException p)
       {
-	System.out.println("MU::msg please provide a MessageHandler");
+        System.out.println("MU::msg please provide a MessageHandler");
       }// catch(NullPointerException p)
     }// catch(MissingResourceException e)
-    return(m);
+    return (m);
   }// public String msg(String m)
-  
-  /** 
-   * setter for the messageHandler 
-   * 
-   * @param m 
+
+  /**
+   * setter for the messageHandler
+   *
+   * @param m
    */
+  @Override
   public void setI8nHandler(MessageHandlerInterface m)
   {
-      messageHandler = m;
-      try
-      {
+    messageHandler = m;
+    try
+    {
       msg = m.getI8nBoundle();
-      }// try
-      catch(NullPointerException p)
-      {
-	System.out.println("MU::msg please provide a MessageHandler with an according bundle");
-      }// catch(NullPointerException p)
+    }// try
+    catch (NullPointerException p)
+    {
+      System.out.println("MU::msg please provide a MessageHandler with an according bundle");
+    }// catch(NullPointerException p)
   }// public void setI8nHandler(MessageHandlerInterface m)
-  
-  /** 
-   * getter for the messageHandler 
-   * 
-   * @return 
+
+  /**
+   * getter for the messageHandler
+   *
+   * @return
    */
+  @Override
   public MessageHandlerInterface getI8nHandler()
   {
-      return(messageHandler);
+    return (messageHandler);
   }// public MessageHandlerInterface getI8nHandler()
 }//public interface MessageUser
 

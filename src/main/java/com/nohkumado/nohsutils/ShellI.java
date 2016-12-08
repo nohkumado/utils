@@ -32,8 +32,11 @@ package com.nohkumado.nohsutils;
 
 //import com.gnu.utils.*;
 import java.util.*;
-import java.util.prefs.*;
 
+/**
+ *
+ * @author nohkumado
+ */
 public interface ShellI  extends MessageHandlerInterface,MessageUserInterface
 {
   /**
@@ -41,7 +44,7 @@ public interface ShellI  extends MessageHandlerInterface,MessageUserInterface
     init
 
     after instantiation initialisation
-
+   * @return
    */
   public boolean init();
   /**
@@ -50,6 +53,8 @@ public interface ShellI  extends MessageHandlerInterface,MessageUserInterface
 
     this Method is the one that catches the commands and interprets them
     should copy some parts of nSim:lineShellI concerning batches!
+   * @param line
+   * @return 
    */
   public String process(String line);
   /**
@@ -60,6 +65,9 @@ public interface ShellI  extends MessageHandlerInterface,MessageUserInterface
     should copy some parts of nSim:lineShellI concerning batches!
 
     this one is for internal use, when invoking commands through the shell programmately, so no command parsing is needed, parameters are in a hastable
+   * @param line
+   * @param parm
+   * @return 
    */
   public String process(String line,HashMap<String,Object> parm);
   /**
@@ -67,8 +75,14 @@ public interface ShellI  extends MessageHandlerInterface,MessageUserInterface
     prompt
 
     build up the short help string
+   * @return 
    */
   public String prompt();
+
+  /**
+   *
+   * @param p
+   */
   public void prompt(String p);
   /**
 
@@ -79,6 +93,11 @@ public interface ShellI  extends MessageHandlerInterface,MessageUserInterface
 
    */
   public void exit();
+
+  /**
+   *
+   * @param endMsg
+   */
   public void exit(String endMsg);
   /** 
    * ressources 
@@ -86,7 +105,7 @@ public interface ShellI  extends MessageHandlerInterface,MessageUserInterface
    * equivalent to the environment variables of a shell....
    * 
    * @param envname 
-   * @param envname 
+   * @return  
    */
   public java.lang.Object ressource(String envname);
   
@@ -103,7 +122,7 @@ public interface ShellI  extends MessageHandlerInterface,MessageUserInterface
    * equivalent to the environment variables of a shell....
    * 
    * @param envname 
-   * @param envname 
+   * @param obj 
    */
   public void ressource(String envname, Object obj);
   /** 
@@ -119,24 +138,63 @@ public interface ShellI  extends MessageHandlerInterface,MessageUserInterface
   public void run();
   /**
     issue a statement....
+   * @param n
    */
   public void print(String n);
   /**
     issue a question and expect a return
+   * @param n
+   * @return 
    */
   public String ask(String n);
+
+  /**
+   *
+   * @param question
+   * @param defaultValue
+   * @return
+   */
   public String ask(String question, String defaultValue);
+
+  /**
+   *
+   * @param question
+   * @param options
+   * @return
+   */
   public String ask(String question, HashMap<String,Object> options);
+
+  /**
+   *
+   * @param n
+   * @return
+   */
   public String askNum(String n);
+
+  /**
+   *
+   * @param question
+   * @param defaultValue
+   * @return
+   */
   public String askNum(String question, String defaultValue);
+
+  /**
+   *
+   * @param question
+   * @param options
+   * @return
+   */
   public String askNum(String question, HashMap<String,Object> options);
   /**
     issue an error
+   * @param errorMsg
    */
   public void error(String errorMsg);
   /**
      isRunning
      return if the shell is running or not
+   * @return 
    */
    public boolean isRunning();
     /**

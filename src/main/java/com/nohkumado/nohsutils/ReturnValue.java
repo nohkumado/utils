@@ -31,6 +31,12 @@ package com.nohkumado.nohsutils;
 
 //import Data.Dumper;
 
+/**
+ *
+ * @author nohkumado
+ * @param <E>
+ */
+
 public class ReturnValue<E> implements Cloneable
 {
     protected boolean status = true;
@@ -42,7 +48,6 @@ public class ReturnValue<E> implements Cloneable
     /** 
      * CTOR 
      * 
-     * @param n 
      */
     public ReturnValue()
     {
@@ -56,7 +61,9 @@ public class ReturnValue<E> implements Cloneable
      * make a conform copy of this element 
      *
      * @return  the cloned object
+   * @throws java.lang.CloneNotSupportedException
      */
+    @Override
     public ReturnValue clone() throws CloneNotSupportedException
     {
         return((ReturnValue) super.clone());
@@ -74,6 +81,7 @@ public class ReturnValue<E> implements Cloneable
      * failed
      * 
      * set the status to false
+   * @return 
      */
     public boolean failed()
     {
@@ -101,7 +109,6 @@ public class ReturnValue<E> implements Cloneable
      * setter for the status
      * 
      * @param s 
-     * @return 
      */
     public void status(boolean s)
     {
@@ -153,7 +160,12 @@ public class ReturnValue<E> implements Cloneable
     {
         value = v;
     }// public void value(Object v)
-    public E value()
+
+  /**
+   *
+   * @return
+   */
+  public E value()
     {
         return(value);
     }// public Object value()
@@ -176,6 +188,7 @@ public class ReturnValue<E> implements Cloneable
      * 
      * @return 
      */
+    @Override
     public String toString()
     {
         boolean moreInfo = false;
@@ -215,7 +228,7 @@ public class ReturnValue<E> implements Cloneable
     /**
      * Set errno.
      *
-     * @param errno the value to set.
+     * @param e errno the value to set.
      */
     public void errno(int e)
     {

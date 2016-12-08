@@ -36,20 +36,30 @@ import java.util.prefs.*;
 import java.util.regex.*;
 //import com.gnu.utils.*;
 
-public class SetCommand extends Command implements Cloneable, CommandI
+/**
+ *
+ * @author nohkumado
+ */
+public class SetCommand extends Command implements CommandI
 {
   protected String name = "", value = "";
   /**
     CTOR
 
     Build up a reference
-
+   * @param s
    */
   public SetCommand(ShellI s)
   {
     super(s);
   }// public Command()
 
+  /**
+   *
+   * @param s
+   * @param n
+   * @param struct
+   */
   public SetCommand(ShellI s,String n,MessageUser struct)
   {
     super(s,n,struct);
@@ -59,18 +69,17 @@ public class SetCommand extends Command implements Cloneable, CommandI
     execute
 
     activate this command
-
-   * @param line 
-   * @param heap 
+ 
    * @return 
    */
+  @Override
   public String execute()
   {
     String result = "";
-    if(name != "")
+    if(!"".equals(name))
     {
       result += name + " : ";
-      if(value != "") shell.ressource(name, value);
+      if(!"".equals(value)) shell.ressource(name, value);
       if(shell.ressource(name) != null)
 	result += shell.ressource(name)+"\n";
       else result += shell.get(name)+"\n";
@@ -79,20 +88,18 @@ public class SetCommand extends Command implements Cloneable, CommandI
     {
       result = shell.msg("Variable_list")+":\nEnvironment:\n";
       HashMap<String,Object> environment = (HashMap<String,Object>)shell.ressource(null);
-      for(Iterator<String> e = environment.keySet().iterator(); e.hasNext();)
+      for (String argName : environment.keySet())
       {
-	String argName = e.next();
-	result += argName + " : "+environment.get(argName)+"\n";
-      }// for(Iterator<String> e = environment.keySet().iterator(); e.hasNext();)
+        result += argName + " : "+environment.get(argName)+"\n";
+      } // for(Iterator<String> e = environment.keySet().iterator(); e.hasNext();)
       result += shell.msg("Variables")+"\n";
       Preferences locenvironment = (Preferences)shell.get(null);
       try
 {
-      for(Iterator<String> e = Arrays.asList(locenvironment.keys()).iterator(); e.hasNext();)
-      {
-	String argName = e.next();
-	result += argName + " : "+environment.get(argName)+"\n";
-      }// for(Iterator<String> e = environment.keySet().iterator(); e.hasNext();)
+        for (String argName : Arrays.asList(locenvironment.keys()))
+        {
+          result += argName + " : "+environment.get(argName)+"\n";
+        } // for(Iterator<String> e = environment.keySet().iterator(); e.hasNext();)
 }
 catch(java.util.prefs.BackingStoreException e) { result += shell.msg("error")+":"+e+"\n"; }
       result += shell.msg("endlist")+"\n";
@@ -109,6 +116,7 @@ catch(java.util.prefs.BackingStoreException e) { result += shell.msg("error")+":
      * @param line 
      * @return 
      */
+  @Override
     public String parse(String line)
     {
       //TODO need to be able to set differently env vars and local vars and need to be able to destroy env vars or local vars
@@ -125,9 +133,9 @@ catch(java.util.prefs.BackingStoreException e) { result += shell.msg("error")+":
     /** 
      * instead of parsing the options, give them directly, eg when invoking a command from the program code directly
      * 
-     * @param parms the hashtable with the options
-     * @param parms 
+     * @param parms the hashtable with the options 
      */
+  @Override
     public void setParameters(HashMap<String,Object> parms)
     {
       if(parms.containsKey("name")) name = (String)parms.get("name");
@@ -140,11 +148,13 @@ catch(java.util.prefs.BackingStoreException e) { result += shell.msg("error")+":
     issue the help message associated with this command
 
    */
+  @Override
   public String help()
   {
     return(shell.msg("set")+" "+name+" "+shell.msg("value")+" "+shell.msg("to_set_a_value")+"\n");
   }//end help
     //make a copy of this object
+  @Override
     public Object clone()
     {
 	//beware! shallow copy! if you command has some arrays or other deep structures, only the ref will be copied!

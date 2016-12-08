@@ -1,14 +1,4 @@
-/** Id: Command.java,v 1.4 2005/09/30 16:24:48 bboett Exp  -*- java -*-
- *
- * NAME Command 
- *
- * AUTHOR Bruno Boettcher <bboett at adlp.org> 
- *
- * SEE ALSO no docu at the moment 
- *
- * DESCRIPTION 
- *
- * a class of object that takes a plan and produces something
+/** 
  * commands::Command object destined to be executed, and that will perform on
  * execution one action
  *
@@ -35,8 +25,7 @@
 package com.nohkumado.nohsutils;
 import java.util.*;
 
-public class Command 
-implements Cloneable, CommandI
+public class Command implements CommandI
 {
     protected String type = null;
     protected String name = null;
@@ -50,14 +39,20 @@ implements Cloneable, CommandI
       CTOR
 
       Build up a reference
-
+   * @param s
 */
     public Command(ShellI s)
     {
       shell = s;
     }// public Command()
 
-    public Command(ShellI s, String n,MessageUser struct)
+  /**
+   *
+   * @param s
+   * @param n
+   * @param struct
+   */
+  public Command(ShellI s, String n,MessageUser struct)
     {
       this(s);
         name = n;
@@ -73,14 +68,16 @@ implements Cloneable, CommandI
      * 
      * @return the name of this item as a string
      */
+    @Override
     public String name() { return(name); }// public String name()
     /** 
      * name
      *
      * set the name of this command
      * 
-     * @return the name of this item as a string
+   * @param n
      */
+    @Override
     public void name(String n) {name = n;}
 
     /**
@@ -91,6 +88,7 @@ implements Cloneable, CommandI
 
      * @return 
      */
+    @Override
     public String execute()
     {
         return("Command::exe : abstract class no code\n");
@@ -103,6 +101,7 @@ implements Cloneable, CommandI
 
      * @return the help message
 */
+    @Override
     public String help()
     {
         return(shell.msg("no help")+"\n");
@@ -112,7 +111,9 @@ implements Cloneable, CommandI
      * make a copy of this object
      * 
      * @return a copy of this object
+   * @throws java.lang.CloneNotSupportedException
      */
+    @Override
     public Object clone()
     {
       try
@@ -130,12 +131,13 @@ implements Cloneable, CommandI
      * @param line line woth ooptions but without the command name
      * @return the unparsed rest
      */
+    @Override
     public String parse(String line) { return(line);}
     /** 
      * instead of parsing the options, give them directly, eg when invoking a command from the program code directly
      * 
-     * @param parms the hashtable with the options
-     * @param parms 
+     * @param parms the hashtable with the options 
      */
+    @Override
     public void setParameters(HashMap<String,Object> parms){ parameter = parms;};
 }//public class Command

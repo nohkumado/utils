@@ -23,12 +23,14 @@
  */
 
 package com.nohkumado.nohsutils.commands;
- import java.util.prefs.*;
- import java.util.*;
  import java.io.*;
-import java.util.regex.*;
+ import java.util.regex.*;
 
- public class PatternFileFilter implements FilenameFilter
+/**
+ *
+ * @author nohkumado
+ */
+public class PatternFileFilter implements FilenameFilter
 {
   protected Pattern pattern;
   /** 
@@ -48,6 +50,7 @@ import java.util.regex.*;
    * @param name 
    * @return 
    */
+  @Override
   public boolean accept(File dir, String name)
   {
     if(pattern != null)

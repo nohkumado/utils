@@ -38,6 +38,10 @@ package com.nohkumado.nohsutils;
 import java.util.*;
 import java.util.prefs.*;
 
+/**
+ *
+ * @author nohkumado
+ */
 public interface ConfigHandlerInterface extends Cloneable
 {
     /**
@@ -55,7 +59,7 @@ public interface ConfigHandlerInterface extends Cloneable
       init
 
       Here we really build up  object
-
+   * @return
     */
     public boolean init();
     /**
@@ -74,8 +78,7 @@ public interface ConfigHandlerInterface extends Cloneable
       dumpSettings 
 
       issue the actual settings of the bot
-
-     * @param Object>hash 
+   * @param hash 
      * @return 
     */
     public String dumpSettings(Preferences hash);
@@ -97,8 +100,7 @@ public interface ConfigHandlerInterface extends Cloneable
 
       getter/setter for the hash of keys that should be accepted through shell
       arguments, if  isn't present any argument will be accepted+
-
-     * @param Object>hash 
+   * @param hash 
     */
     public void setValidKeys(HashMap<String, Object>hash);
     /**
@@ -106,8 +108,7 @@ public interface ConfigHandlerInterface extends Cloneable
       container 
 
       getter/setter for the hash of settings we are manipulating+
-
-     * @param Object>hash 
+   * @param hash 
      * @return 
     */
     public Preferences container(Preferences hash);
@@ -133,8 +134,7 @@ public interface ConfigHandlerInterface extends Cloneable
       the '-'s a no is detected it is thought as a negation setting if there isn't a
       valid value following+
 
-     * @param HashMap<String,Object>arguments 
-     * @param Object>arguments 
+     * @param arguments HashMap<String,Object>arguments 
     */
     public void parseArgs(HashMap<String,Object>arguments);
     /**
