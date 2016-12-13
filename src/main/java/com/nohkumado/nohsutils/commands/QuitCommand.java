@@ -50,7 +50,7 @@ public class QuitCommand extends Command implements CommandI
    */
   public QuitCommand(ShellI s)
   {
-    super(s);
+    super(s,"quit");
   }// public Command()
 
   /**
@@ -59,9 +59,9 @@ public class QuitCommand extends Command implements CommandI
    * @param n
    * @param struct
    */
-  public QuitCommand(ShellI s, String n, MessageUser struct)
+  public QuitCommand(ShellI s, String n)
   {
-    super(s, n, struct);
+    super(s, n);
   }// public QuitCommand()
 
   /**
@@ -76,7 +76,7 @@ public class QuitCommand extends Command implements CommandI
   public String execute()
   {
     shell.exit();
-    return (shell.msg("shell_exiting") + "\n");
+    return (shell.msg("SHELL_EXITING") + "\n");
   }//end execute
 
   /**
@@ -89,7 +89,7 @@ public class QuitCommand extends Command implements CommandI
   @Override
   public String help()
   {
-    return (shell.msg("type") + " " + name + " " + shell.msg("to exit") + "\n");
+    return (shell.msg("TYPE") + " " + shell.msg("QUIT_CMD") + " " + shell.msg("to exit") + "\n");
   }//end help
   //make a copy of this object
 

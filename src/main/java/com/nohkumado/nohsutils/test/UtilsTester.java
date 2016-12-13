@@ -11,7 +11,7 @@ import com.nohkumado.nohsutils.*;
  */
 public class UtilsTester
 {
-    protected static String testName = "UtilsTester";
+    protected static String testName = "UTILSTESTER";
     /** 
      * 
      * 

@@ -10,7 +10,7 @@ package com.nohkumado.nohsutils;
 public class Tester
 {
   /** name of tst*/
-    protected static String testName = "Tester";
+    protected static String testName = "TESTER";
     /** 
      * 
      * 

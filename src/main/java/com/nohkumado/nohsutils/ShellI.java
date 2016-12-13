@@ -117,7 +117,15 @@ public interface ShellI extends MessageHandlerInterface, MessageUserInterface
    * @param envname
    * @return
    */
-  public java.lang.Object ressource(String envname);
+  public Object ressource(String envname);
+
+  /**
+   * get a ressource
+   * @param envname
+   * @param obj
+   * @return
+   */
+  public Object ressource(String envname, Object obj);
 
   /**
    * local settings
@@ -125,7 +133,7 @@ public interface ShellI extends MessageHandlerInterface, MessageUserInterface
    * @param envname
    * @return
    */
-  public java.lang.Object get(String envname);
+  public String get(String envname);
 
   /**
    * ressources
@@ -135,7 +143,7 @@ public interface ShellI extends MessageHandlerInterface, MessageUserInterface
    * @param envname
    * @param obj
    */
-  public void get(String envname, Object obj);
+  public void set(String envname, String obj);
 
   /**
    * prototype for a help function
@@ -228,30 +236,34 @@ public interface ShellI extends MessageHandlerInterface, MessageUserInterface
 
   /**
    * set the parent shell
+   *
    * @param shell
    */
   public void setParent(ShellI shell);
 
   /**
    * set the child shell
+   *
    * @param actShell
    */
   public void setChild(ShellI actShell);
 
   /**
    * remove the child
+   *
    * @return
    */
   public ShellI rmChild();
 
   /**
    * set the mode
+   *
    * @param mode
    */
   public void parseMode(String mode);
 
   /**
-   * clear commands 
+   * clear commands
    */
   public void clearCmds();
 
@@ -260,4 +272,10 @@ public interface ShellI extends MessageHandlerInterface, MessageUserInterface
    * @param modeName
    */
   public void setInputMode(boolean modeName);
+
+  /**
+   * build the list of available preferences
+   * @return
+   */
+  public StringBuilder listPrefs();
 }//public class ShellI

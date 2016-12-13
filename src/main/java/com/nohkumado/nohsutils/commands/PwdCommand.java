@@ -46,7 +46,7 @@ public class PwdCommand extends Command implements CommandI
    */
   public PwdCommand(ShellI s)
   {
-    super(s);
+    super(s,"pwd");
   }// public Command()
 
   /**
@@ -57,7 +57,7 @@ public class PwdCommand extends Command implements CommandI
    */
   public PwdCommand(ShellI s,String n,MessageUser struct)
   {
-    super(s,n,struct);
+    super(s,n);
   }// public PwdCommand()
   /**
 
@@ -72,11 +72,10 @@ public class PwdCommand extends Command implements CommandI
   public String execute()
   {
     String result = "";
-    String pwd = (String)shell.ressource("pwd");
-    if(pwd == null ) pwd = System.getProperty("user.dir");
-    else if(pwd.length() <= 0 ) pwd = System.getProperty("user.dir");
-    shell.get("pwd",pwd);
-    return(pwd);
+    String pwd = shell.get("pwd");
+    if(pwd == null || pwd.length() <= 0 || "pwd".equals(pwd)) pwd = System.getProperty("user.dir");
+    shell.set("pwd",pwd);
+    return(pwd+"\n");
   }//end execute
   /**
 
@@ -88,7 +87,7 @@ public class PwdCommand extends Command implements CommandI
   @Override
   public String help()
   {
-    return(shell.msg("pwd")+" "+shell.msg("to_display_actual_working_directory")+"\n");
+    return(shell.msg("pwd")+" "+shell.msg("TO_DISPLAY_ACTUAL_WORKING_DIRECTORY")+"\n");
   }//end help
   /** 
    * copy this object 

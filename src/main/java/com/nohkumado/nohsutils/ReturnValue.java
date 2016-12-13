@@ -1,13 +1,4 @@
-/** $Id: ReturnValue.java,v 1.4 2005/09/30 16:24:48 bboett Exp $ -*- java -*-
- * NAME ReturnValue 
- *
- * AUTHOR Bruno Boettcher <bboett at adlp.org> 
- *
- * SEE ALSO no docu at the moment 
- *
- * DESCRIPTION This is the basic brick of the game, has a size and a capacity This is a 
- * subclass of L<bouge.modules.baseactor>
-
+/** 
  * COPYRIGHT and LICENCE
 
  *  Copyright (c) 2004 Bruno Boettcher
@@ -29,7 +20,6 @@
 
 package com.nohkumado.nohsutils;
 
-//import Data.Dumper;
 
 /**
  *
@@ -43,7 +33,7 @@ public class ReturnValue<E> implements Cloneable
     protected String msg = "";
     protected int errno = 0;
     protected E value = null;
-    protected String stringName = "ReturnValue";
+    protected String stringName = "returnvalue";
     //protected Item item = null;
     /** 
      * CTOR 
@@ -52,7 +42,7 @@ public class ReturnValue<E> implements Cloneable
     public ReturnValue()
     {
         super();
-        stringName = "ReturnValue";
+        stringName = "returnvalue";
     }// public ReturnValue(String name)
 
     /**
@@ -196,12 +186,12 @@ public class ReturnValue<E> implements Cloneable
         if(!(msg.equals("")))
         {
             moreInfo = true;
-            report +=":\n   report:"+msg;
+            report +=":\n   REPORT:"+msg;
         }// if(!msg.equals(""))
         if(value != null) 
         {
            if(moreInfo == false) report +=":";
-            report +="\n   value:"+value;
+            report +="\n   VALUE:"+value;
         }// if(value != null) 
         return(report);
     }//public String toString()

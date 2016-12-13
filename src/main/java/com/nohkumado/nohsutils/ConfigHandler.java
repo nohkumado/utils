@@ -1,20 +1,5 @@
-/** Id: ConfigHandler.java,v 1.4 2005/09/30 16:24:48 bboett Exp  -*- java -*-
- *
- * NAME ConfigHandler 
- *
- * AUTHOR Bruno Böttcher <bboett at adlp.org> 
- *
- * SEE ALSO no docu at the moment 
- *
- * SYNOPSIS
- *
- * subclass  thing to get the setting method 
- *
- * DESCRIPTION 
- * 
- * This class is an entity that is given a target and then loads or saves the settings
- * accordingly
- * 
+/** 
+ 
  * COPYRIGHT and LICENCE
  * 
  *  Copyright (c) 2004 Bruno Boettcher
@@ -41,17 +26,20 @@ import java.util.prefs.*;
 import java.util.regex.*;
 
 /**
- *
+ *  * subclass  thing to get the setting method 
+ * This class is an entity that is given a target and then loads or saves the settings
+ * accordingly
+ * 
  * @author nohkumado
  */
 public class ConfigHandler implements Cloneable,ConfigHandlerInterface
 {
   /** the internationalization stuff */
-  ResourceBundle msg;
+  //ResourceBundle msg;
 
   protected Preferences settings = Preferences.userNodeForPackage(this.getClass());
-  protected String type = "ConfigHandler";
-  protected String configName = "ConfigHandler";
+  protected String type = "configHandler";
+  protected String configName = "configHandler";
   /**
 
     new, Constructor
@@ -64,7 +52,7 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
   {
     type = "abstract";
       //System.out.println("CTOR CH: default ");
-    if (settings != null) configName = settings.get("baseName","ConfigHandler");
+    if (settings != null) configName = settings.get("basename","confighandler");
   }// public void new·
   /**
 
@@ -78,7 +66,7 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
   {
     type = "abstract";
       configName = base;
-    if (settings != null) settings.put("baseName",base);
+    if (settings != null) settings.put("basename",base);
       //System.out.println("CTOR CH: default ");
   }// public void new·
 
@@ -92,7 +80,7 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
     {
       this.settings  = settings;
       //System.out.println("CTOR CH: baseName: "+settings.get("baseName",null));
-      configName = settings.get("baseName","ConfigHandler");
+      configName = settings.get("basename","confighandler");
     }// if (settings != null) 
     type = "abstract";
   }// public void new·
@@ -108,37 +96,37 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
   {
       //System.out.println("init CH: baseName: "+settings.get("baseName",null));
     if(settings == null) settings = Preferences.userNodeForPackage(this.getClass()); 
-    if(msg == null)
-    {
-      Locale currentLocale = Locale.getDefault();
-      if(settings.get("lang",null) != null)
-      {
-	  String country = settings.get("country",null);
-	  String language = settings.get("lang",null);
-	  if(country == null) country = language.toUpperCase();
-	  else country = country.toUpperCase();
-	  currentLocale = new Locale(language, country);
-      }// if(settings.get("lang",null) != null)«me
-      try
-      {
-      msg = ResourceBundle.getBundle(configName,currentLocale);
-      }// try
-      catch(MissingResourceException e)
-      {
-	System.out.println("problem finding language ressources for "+configName);
-      try
-      {
-        msg = ResourceBundle.getBundle(configName);
-	System.out.println("loaded default");
-      }// try
-      catch(MissingResourceException f)
-      {
-	System.out.println("not even loaded default....");
-      }// catch(MissingResourceException e)
-      msg = ResourceBundle.getBundle(configName);
-	System.out.println("loaded default");
-      }// catch(MissingResourceException e)
-    }// if(msg == null)
+//    if(msg == null)
+//    {
+//      Locale currentLocale = Locale.getDefault();
+//      if(settings.get("lang",null) != null)
+//      {
+//	  String country = settings.get("country",null);
+//	  String language = settings.get("lang",null);
+//	  if(country == null) country = language.toUpperCase();
+//	  else country = country.toUpperCase();
+//	  currentLocale = new Locale(language, country);
+//      }// if(settings.get("lang",null) != null)«me
+//      try
+//      {
+//      msg = ResourceBundle.getBundle(configName,currentLocale);
+//      }// try
+//      catch(MissingResourceException e)
+//      {
+//	System.out.println("PROBLEM FINDING LANGUAGE RESSOURCES FOR "+configName);
+//      try
+//      {
+//        msg = ResourceBundle.getBundle(configName);
+//	System.out.println("LOADED DEFAULT");
+//      }// try
+//      catch(MissingResourceException f)
+//      {
+//	System.out.println("NOT EVEN LOADED DEFAULT....");
+//      }// catch(MissingResourceException e)
+//      msg = ResourceBundle.getBundle(configName);
+//	System.out.println("LOADED DEFAULT");
+//      }// catch(MissingResourceException e)
+//    }// if(msg == null)
 
     //loadSettings(configName+".cfg");
     //TODO new  sys
@@ -178,8 +166,8 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
   public String loadSettings(String fileName) throws FileNotFoundException
   {
     String unparsed = "";
-    Pattern commentPattern = Pattern.compile("^\\s*#");
-    Pattern pattern = Pattern.compile("^(\\S+)\\s*=\\s*(\\S+)");
+    Pattern commentPattern = Pattern.compile("^\\S*#");
+    Pattern pattern = Pattern.compile("^(\\S+)\\S*=\\S*(\\S+)");
     File confFile = new File(fileName);
     if(!confFile.exists()) return(unparsed);
     Scanner scanner = new Scanner(confFile);
@@ -230,7 +218,7 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
     }// try
     catch(java.util.prefs.BackingStoreException e) 
     {
-      listing += "\nError:"+e;
+      listing += "\nERROR:"+e;
     }// catch(java.util.prefs.BackingStoreException e) 
     return listing;
   }
@@ -311,7 +299,8 @@ public class ConfigHandler implements Cloneable,ConfigHandlerInterface
 	}
 	else  
 	{
-	  error += msg.getString("couldn't handle")+" "+tmp+"\n"; 
+            //error += msg.getString("couldn't handle")+" "+tmp+"\n"; 
+	  error += "couldn't handle"+" "+tmp+"\n"; 
 	}// else  
       }// end for
       if(error.length() > 0) settings.put("error",error);

@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 public class TokenParser
 {
 
-  public static final String TAG = "TokP";
+  public static final String TAG = "TOKP";
   public static final int UNPARSED_ARGS = 1;
 
   protected CmdLineParser parentParser;

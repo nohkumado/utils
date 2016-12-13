@@ -27,11 +27,11 @@ import java.util.regex.Pattern;
 public class CharParser
 {
 
-  public static final String TAG = "CharP";
+  public static final String TAG = "CHARP";
   public static final int UNPARSED_ARGS = 1;
 
   protected CmdLineParser parentParser;
-  protected ArrayList<Pattern> patterns = new ArrayList<Pattern>();
+  protected ArrayList<Pattern> patterns = new ArrayList<>();
 
   //Pattern pat_cmd_arg = Pattern.compile("^(\\S+)\\s+(.*)$");
   protected String errorMsg = "";
@@ -62,7 +62,7 @@ public class CharParser
     errorCode = 0;
     line = line.trim();
 
- System.err.println("char parsing  '" + line + "'");
+ System.err.println("CHAR PARSING "+line);
 
     Matcher matcher;
     int lineLength = 1;
@@ -88,7 +88,7 @@ public class CharParser
           String cmdPart, argPart;
           if (matcher.groupCount() > 0)
           {
-            System.err.println( "num of groups  '" + matcher.groupCount() + "' for " + cmdPat);
+            System.err.println( "NUM OF GROUPS  "+matcher.groupCount()+" FOR "+cmdPat);
 
             cmdPart = line.substring(0, matcher.start(1));
             argPart = matcher.group(1);
@@ -96,12 +96,12 @@ public class CharParser
           }
           else
           {
-            System.err.println( "no arg cmd " + matcher.group() + " in line " + line);
+            System.err.println( "NO ARG CMD "+matcher.group()+" IN LINE "+line);
             cmdPart = line;
             argPart = "";
           }
 
-          System.err.println(" split into  '" + cmdPart + "' and '" + argPart + "' rest '" + line + "'");
+          System.err.println(" SPLIT INTO  '"+cmdPart+"' AND '"+argPart+"' REST 'line'");
 
           //dont forget to call the parse method of the command  
           //need to split it up 
@@ -113,11 +113,11 @@ public class CharParser
           {
             aCmd.parse(argPart);
             resultStack.add(aCmd);
-            System.err.println(" cmd '" + aCmd + "' added");
+            System.err.println(" CMD '"+aCmd+"' ADDED");
           }
           else
           {
-            System.err.println(" cmd '" + line + "' not found");
+            System.err.println(" CMD '"+line+"' NOT FOUND");
             result &= false;
           }
           continue;

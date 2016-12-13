@@ -41,7 +41,7 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
    * the reference to the active shell
    */
   protected ShellI shell = null;
-  public static final String TAG = "CmdP";
+  public static final String TAG = "CMDP";
 
   /**
    *
@@ -70,7 +70,7 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
         CommandI aCmd = entry.getValue();
         aCmd.name(entry.getKey());
         commands.put(entry.getKey(), aCmd);
-      }// if(cmds.get(key) instanceof Command)
+      }// if(cmds.set(key) instanceof Command)
 
     }// for(String key: commands.keySet())
     return (null);
@@ -128,7 +128,7 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
     do
     {
       //maybe this isnt needed as long as no command is found the help is called anyway TODO
-      if (line.matches("^help|^h$|^\\?"))
+      if (line.matches("^help|^hs|^\\?"))
       {
         System.out.println(" = help " + line);
         help();
@@ -146,45 +146,39 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
       //then split in cmd args
       //search cmd and clone cmds and feed args
       //put into vector
-      String mode;
-      if (shell.ressource("parsing") != null)
-      {
-        mode = shell.ressource("parsing").toString();
-      }
-      else
+      String mode = shell.get("parsing");
+      if (mode == null || "parsing".equals("parsing"))
       {
         mode = "tokenized";
       }
 
-      if (mode != null)
+      switch (mode)
       {
-        switch (mode)
-        {
-          //if(mode == null || mode == "tokenized")
-          case "tokenized":
-            TokenParser parser = new TokenParser(this);
-            if (strictParse && !parser.parse(line, resultStack))
+        //if(mode == null || mode == "tokenized")
+        case "tokenized":
+          TokenParser parser = new TokenParser(this);
+          if (strictParse && !parser.parse(line, resultStack))
+          {
+            if (parser.errorCode() == TokenParser.UNPARSED_ARGS)
             {
-              if (parser.errorCode() == TokenParser.UNPARSED_ARGS)
-              {
-                StringBuilder sb = new StringBuilder();
-                sb.append(shell.msg("syntax_error"));
-                sb.append(" ");
-                sb.append(shell.msg("cmd_command"));
-                sb.append(" ");
-                sb.append(parser.errorCmd());
-                sb.append(" ");
-                sb.append(shell.msg("cmd_unparsed_args"));
-                sb.append(" ");
-                sb.append(parser.errorMsg());
+              StringBuilder sb = new StringBuilder();
+              sb.append(shell.msg("SYNTAX_ERROR"));
+              sb.append(" ");
+              sb.append(shell.msg("CMD_COMMAND"));
+              sb.append(" ");
+              sb.append(parser.errorCmd());
+              sb.append(" ");
+              sb.append(shell.msg("CMD_UNPARSED_ARGS"));
+              sb.append(" ");
+              sb.append(parser.errorMsg());
 
-                shell.print(sb.toString());
-              }
+              shell.print(sb.toString());
             }
-            /*if (line.matches("^(\\S+)\\s*$"))
+          }
+          /*if (line.matches("^(\\S+)\\s*$"))
             {
               line = line.trim();
-              //dont forget to call the parse method of the command  need to split it up TODO BTW here we add the parsing ehm... since the Commands hold the shell, thew dont need to get the heap explicitely, no?
+              //dont forget to call the parse method of the command  need to split it up TODO BTW here we add the parsing ehm... since the Commands hold the shell, thew dont need to set the heap explicitely, no?
               CommandI aCmd = findCmd(line);
               if (aCmd != null)
               {
@@ -224,39 +218,38 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
               }
             }//else*/
 
-            break;
-          //else if(mode == "vilike")
-          case "char":
+          break;
+        //else if(mode == "vilike")
+        case "char":
 
-            CharParser cparser = new CharParser(this);
-            if (strictParse && !cparser.parse(line, resultStack))
+          CharParser cparser = new CharParser(this);
+          if (strictParse && !cparser.parse(line, resultStack))
+          {
+            if (cparser.errorCode() == cparser.UNPARSED_ARGS)
             {
-              if (cparser.errorCode() == cparser.UNPARSED_ARGS)
-              {
-                StringBuilder sb = new StringBuilder();
-                sb.append(shell.msg("syntax_error"));
-                sb.append(" ");
-                sb.append(shell.msg("cmd_command"));
-                sb.append(" ");
-                sb.append(cparser.errorCmd());
-                sb.append(" ");
-                sb.append(shell.msg("cmd_unparsed_args"));
-                sb.append(" ");
-                sb.append(cparser.errorMsg());
+              StringBuilder sb = new StringBuilder();
+              sb.append(shell.msg("SYNTAX_ERROR"));
+              sb.append(" ");
+              sb.append(shell.msg("CMD_COMMAND"));
+              sb.append(" ");
+              sb.append(cparser.errorCmd());
+              sb.append(" ");
+              sb.append(shell.msg("CMD_UNPARSED_ARGS"));
+              sb.append(" ");
+              sb.append(cparser.errorMsg());
 
-                shell.print(sb.toString());
-              }
+              shell.print(sb.toString());
             }
-            break;
-          case "vilike":
-            System.out.println("please provide an implementation for this parsing mode");
-            break;
-          default:
-            System.out.println("unsupported parsing mode");
-            help();
-            return (resultStack); //else//else
+          }
+          break;
+        case "vilikie":
+          System.out.println("PLEASE PROVIDE AN IMPLEMENTATION FOR THIS PARSING MODE");
+          break;
+        default:
+          System.out.println("UNSUPPORTED PARSING MODE " + mode);
+          help();
+          return (resultStack); //else//else
         }
-      }
 
       if (resultStack.size() <= 0)
       {
@@ -323,14 +316,14 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
   @Override
   public String help()
   {
-    String help = "";
+    StringBuilder help = new StringBuilder();
     for (String cmdName : commands.keySet())
     {
       CommandI aCmd = commands.get(cmdName);
-      help += cmdName + " : " + aCmd.help();
+      help.append(cmdName).append(" : ").append(aCmd.help());
     } //for(Iterator<String> i = commands.keySet().iterator(); i.hasNext();)
-    shell.print(help);
-    return (help);
+    shell.print(help.toString());
+    return (help.toString());
   }//public String help()
 
   /*
@@ -343,7 +336,7 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
 
     if (commands.containsKey(token))
     {
-      //System.out.println("got it:"+commands.get(token));
+      //System.out.println("got it:"+commands.set(token));
       return ((CommandI) commands.get(token).clone());
     }//if(commands.containsKey(token)) 
     String key = "";
@@ -362,8 +355,8 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
     }
     if (matchingKeys.size() > 1)
     {
-      CommandI aCmd = new Command(shell); // dummy command to avoid the help output
-      shell.print(shell.msg("need specifying") + " " + matchingKeys.toString());
+      CommandI aCmd = new Command(shell, "dummy"); // dummy command to avoid the help output
+      shell.print(shell.msg("NEED SPECIFYING") + ") " + matchingKeys.toString());
       return (aCmd);
     }//if(matchingKeys.size() > 1)
     return (null);
@@ -372,7 +365,7 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
   @Override
   public void parseMode(String mode)
   {
-    shell.get("parsing", mode);
+    shell.set("parsing", mode);
   }
 
   @Override

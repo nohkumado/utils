@@ -33,21 +33,11 @@ public class Command implements CommandI
   protected String type = null;
   protected String name = null;
   protected String group = "user";
-  protected MessageUser messageHandler = null;
+  //protected MessageUser messageHandler = null;
   protected ShellI shell = null;
   protected HashMap<String, Object> parameter;
 
-  /**
-   * CTOR
-   *
-   * Build up a reference
-   *
-   * @param s
-   */
-  public Command(ShellI s)
-  {
-    shell = s;
-  }// public Command()
+
 
   /**
    *
@@ -55,14 +45,15 @@ public class Command implements CommandI
    * @param n
    * @param struct
    */
-  public Command(ShellI s, String n, MessageUser struct)
+  //public Command(ShellI s, String n, MessageUser struct)
+  public Command(ShellI s, String n)
   {
-    this(s);
     name = n;
-    if (struct != null)
-    {
-      messageHandler = struct;
-    }// if(struct != null)
+    shell = s;
+//    if (struct != null)
+//    {
+//      messageHandler = struct;
+//    }// if(struct != null)
   }// public Command()
 
   /**
@@ -102,7 +93,7 @@ public class Command implements CommandI
   @Override
   public String execute()
   {
-    return ("Command::exe : abstract class no code\n");
+    return ("COMMAND::EXE : ABSTRACT CLASS NO CODE\n");
   }//end execute
 
   /**
@@ -116,7 +107,7 @@ public class Command implements CommandI
   @Override
   public String help()
   {
-    return (shell.msg("no help") + "\n");
+    return (shell.msg("NO HELP") + ")\n");
   }//end help
 
   /**
@@ -135,7 +126,7 @@ public class Command implements CommandI
       return (cloned);
     } catch (CloneNotSupportedException e)
     {
-      System.err.println("can't clone this");
+      System.err.println("CAN'T CLONE THIS");
       e.printStackTrace();
     }
     return (null);
@@ -175,6 +166,6 @@ public class Command implements CommandI
   @Override
   public Pattern pattern()
   {
-    return Pattern.compile("^" + name + "\\s*$");
+    return Pattern.compile("^"+name+"\\s*s");
   }
 }//public class Command

@@ -81,13 +81,13 @@ public class MessageHandler implements MessageHandlerInterface
     {
       try
       {
-        FileWriter fw = new FileWriter(new File(config.container().get("missingMsges", "missingMsges")));
+        FileWriter fw = new FileWriter(new File(config.container().get("missingmesges", "missingmsges")));
         newTags.store(fw, "no comment");
         fw.close();
       }// try
       catch (IOException e)
       {
-        System.out.println("MessageHandler:save failed " + e);
+        System.out.println("MESSAGEHANDLER:SAVE FAILED " + e);
       }// catch(IOException e)
     }// if(modified)
   }// public void save()
@@ -100,6 +100,7 @@ public class MessageHandler implements MessageHandlerInterface
   {
     Preferences settings = config.container();
     Locale currentLocale = Locale.getDefault();
+
     if (settings.get("lang", null) != null)
     {
       String country = settings.get("country", null);
@@ -114,16 +115,40 @@ public class MessageHandler implements MessageHandlerInterface
       }
       currentLocale = new Locale(language, country);
     }// if(settings.get("lang",null) != null)«me
-    String configName = settings.get("baseName", "ConfigUser");
+    /*String[] bundelNamesToTry = new String[]
+    {
+      settings.get("basename", "configuser"),
+      "com/nohkumado/nohsutils/messages",
+      "com.nohkumado.nohsutils.messages",
+      "messages",
+      "resources.messages",
+    };
+    
+    for( String configName: bundelNamesToTry)
+    {
+       if(loadBundle(configName)) break; 
+      
+    }
+    */
+    if(!loadBundle("messages")) System.err.println("failed to load bundle");
+  }// public void load()
+
+  private boolean loadBundle(String configName)
+  {
+    boolean result = true;
     try
     {
-      msg = ResourceBundle.getBundle(configName, currentLocale);
+      //System.out.println("loading BNDLE " + configName);
+      msg = ResourceBundle.getBundle(configName);
     }// try
-    catch (MissingResourceException e)
+    catch (MissingResourceException g)
     {
-      System.out.println("problem finding language ressources for " + configName);
+      System.out.println("FAILED NO WAY TO FIND THE BNDLE " + configName);
+      result = false;
+
     }// catch(MissingResourceException e)
-  }// public void load()
+    return result;
+  }
 
   /**
    * a tag is missing in the db, add one per default, and save the base? TODO

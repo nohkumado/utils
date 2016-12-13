@@ -1,21 +1,6 @@
 /**
- * Id: ConfigUser.java,v 1.4 2005/09/30 16:24:48 bboett Exp  -*- java -*-
- *
- * NAME ConfigUser
- *
- * AUTHOR Bruno Böttcher <bboett at adlp.org>
- *
- * SEE ALSO no docu at the moment
- *
- * SYNOPSIS
- *
- * subclass thing to get the setting method
- *
  * DESCRIPTION
- *
- * This class gives access to the settings setter/getter that uses a local or
- * central repository (a hash at the moment) for the settings of an object
- *
+ ≈
  * COPYRIGHT and LICENCE
  *
  * Copyright (c) 2004 Bruno Boettcher
@@ -40,7 +25,8 @@ import java.util.prefs.*;
 
 //public class ConfigUser<Item> extends Item<Item>
 /**
- *
+ *◊
+ * 
  * @author nohkumado
  */
 public class ConfigUser extends MessageUser implements ConfigUserInterface, Cloneable
@@ -50,8 +36,8 @@ public class ConfigUser extends MessageUser implements ConfigUserInterface, Clon
   //TODO don't know how to tranlsate in Pref system protected Preferences subsettings = null;
   protected ConfigHandlerInterface configHandler = null;
   protected MessageHandlerInterface traducs = null;
-  protected String type = "com.gnu.utils.ConfigUser";
-  protected String configName = "ConfigUser";
+  protected String type = "COM.GNU.UTILS.CONFIGUSER";
+  protected String configName = "CONFIGUSER";
 
   /**
    *
@@ -124,7 +110,7 @@ public class ConfigUser extends MessageUser implements ConfigUserInterface, Clon
     }
     else
     {
-      settings.put(key, "" + value);
+      settings.put(key, ""+value);
     }
     return (settings.get(key, null));
     //}// if
@@ -243,7 +229,7 @@ public class ConfigUser extends MessageUser implements ConfigUserInterface, Clon
   @Override
   public String version()
   {
-    return ("Revision: 1.6 ");
+    return ("REVISION: 1.6 ");
   }//public void version
 
   /**
@@ -360,7 +346,7 @@ public class ConfigUser extends MessageUser implements ConfigUserInterface, Clon
         }
         else
         {
-          error += msg("couldn't handle") + " " + tmp + "\n";
+          error += msg("COULDN'T HANDLE") + ") " + tmp + ")\n";
         }// else  
       }// end for
       if (error.length() > 0)

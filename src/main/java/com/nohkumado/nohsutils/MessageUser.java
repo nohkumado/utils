@@ -63,7 +63,7 @@ public class MessageUser implements MessageUserInterface
   @Override
   public String msg(String m)
   {
-    String result = "";
+    String result = "start";
     try
     {
       return (msg.getString(m));
@@ -76,9 +76,13 @@ public class MessageUser implements MessageUserInterface
       }// try
       catch (NullPointerException p)
       {
-        System.out.println("MU::msg please provide a MessageHandler");
+        System.out.println("MU::MSG PLEASE PROVIDE A MESSAGEHANDLER cant save "+ m);
       }// catch(NullPointerException p)
     }// catch(MissingResourceException e)
+    catch (NullPointerException p)
+    {
+      System.out.println("MU::MSG PLEASE PROVIDE A MESSAGEHANDLERcant save "+ m);
+    }// catch(NullPointerException p)
     return (m);
   }// public String msg(String m)
 
@@ -97,7 +101,7 @@ public class MessageUser implements MessageUserInterface
     }// try
     catch (NullPointerException p)
     {
-      System.out.println("MU::msg please provide a MessageHandler with an according bundle");
+      System.out.println("MU::MSG PLEASE PROVIDE A MESSAGEHANDLER WITH AN ACCORDING BUNDLE");
     }// catch(NullPointerException p)
   }// public void setI8nHandler(MessageHandlerInterface m)
 

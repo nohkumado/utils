@@ -1,35 +1,37 @@
-/** Id: LsCommand.java,v 1.4 2005/09/30 16:24:48 bboett Exp  -*- java -*-
+/**
+ * Id: LsCommand.java,v 1.4 2005/09/30 16:24:48 bboett Exp  -*- java -*-
  *
- * NAME LsCommand 
+ * NAME LsCommand
  *
- * AUTHOR Bruno Boettcher <bboett at adlp.org> 
+ * AUTHOR Bruno Boettcher <bboett at adlp.org>
  *
- * SEE ALSO no docu at the moment 
+ * SEE ALSO no docu at the moment
  *
- * DESCRIPTION 
- * changes a settings of the shell
+ * DESCRIPTION changes a settings of the shell
  *
- * SYNOPSIS 
+ * SYNOPSIS
  *
  * after instantiation, execute it!
  *
  * COPYRIGHT and LICENCE
  *
- *  Copyright (c) 2004 Bruno Boettcher
+ * Copyright (c) 2004 Bruno Boettcher
  *
- *  LsCommand.java is free software; you can redistribute it and/or modify it under
- *  the terms of the GNU General Public License as published by the Free Software
- *  Foundation; version 2 of the License.
+ * LsCommand.java is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; version 2 of the License.
  *
- *  This program is distributed in the hope that it will be importful, but WITHOUT ANY
- *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * This program is distributed in the hope that it will be importful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 package com.nohkumado.nohsutils.commands;
+
 import java.io.*;
 import java.util.regex.*;
 import com.nohkumado.nohsutils.*;
@@ -40,17 +42,20 @@ import com.nohkumado.nohsutils.*;
  */
 public class LsCommand extends Command implements Cloneable, CommandI
 {
+
   protected String path = "";
   protected FilenameFilter filter;
-  /**
-    CTOR
 
-    Build up a reference
+  /**
+   * CTOR
+   *
+   * Build up a reference
+   *
    * @param s
    */
   public LsCommand(ShellI s)
   {
-    super(s);
+    super(s, "ls");
   }// public Command()
 
   /**
@@ -59,108 +64,111 @@ public class LsCommand extends Command implements Cloneable, CommandI
    * @param n
    * @param struct
    */
-  public LsCommand(ShellI s,String n,MessageUser struct)
+  public LsCommand(ShellI s, String n, MessageUser struct)
   {
-    super(s,n,struct);
+    super(s, n);
   }// public LsCommand()
+
   /**
-
-    execute
-
-    activate this command
- 
-   * @return 
+   *
+   * execute
+   *
+   * activate this command
+   *
+   * @return
    */
   @Override
   public String execute()
   {
     String result = "";
     //TODO fetch PwdCommand from shell here would be more elegant
-    String pwd = (String) shell.ressource("pwd");
-    if(pwd == null ) pwd = System.getProperty("user.dir");
-    else if(pwd.length() <= 0 ) pwd = System.getProperty("user.dir");
+    String pwd = shell.get("pwd");
 
-    if(!path.equals(""))
+    if ("".equals(path))
     {
-      if(!path.startsWith("/")) path = pwd+System.getProperty("file.separator")+path;
+      path = pwd;
     }// if(value != "")
-    else path = pwd;
 
     File theDir = new File(path);
-    if(theDir.exists() && theDir.isDirectory())
+    if (theDir.exists() && theDir.isDirectory())
     {
       String[] choices = theDir.list(filter);
-      for(String name : choices) 
+      for (String name : choices)
       {
-	result +=  name+"\n";
+        result += name + "\n";
       }//for(String name : choices) 
-      return(result);
+      return (result);
     }//if(theDir.exists() && theDir.isDirectory())
 
-    return(result);
+    return (result);
   }//end execute
 
-  /** 
-   * parse a setting line 
-   * with no parameter its prints the whole list
-   * with one parameter it prints the value of that parameter
-   * with 2 parameters it replaces the parameter
-   * 
-   * @param line 
-   * @return 
+  /**
+   * parse a setting line with no parameter its prints the whole list with one
+   * parameter it prints the value of that parameter with 2 parameters it
+   * replaces the parameter
+   *
+   * @param line
+   * @return
    */
   @Override
   public String parse(String line)
   {
-    path = "";
-    if(line != null && line.length() > 0)
+    String pwd = shell.get("pwd");
+    if (pwd == null || pwd.length() <= 0 || "pwd".equals(pwd))
     {
-      String[] result = line.split(System.getProperty("file.separator"));
-      if(result.length > 1)
-      {
-	int x=0; 
-	if(result.length > 1) path = ""; //reset the path if there is a path component!
-	for (; x<result.length-1; x++) path += result[x]+System.getProperty("file.separator");
-	line = result[x];
-      }// if(result.lenght > 1)«»
+      pwd = System.getProperty("user.dir");
+      shell.set("pwd", pwd);
+    }
+    path = "";
+    if (line.length() <= 0)
+    {
 
-      Pattern regexp = Pattern.compile("^(.*?)\\*(.*)");
-      Matcher matcher = regexp.matcher(line);
-      if(matcher.find())
-      {
-      line = matcher.group(1)+".*"+matcher.group(2);
-	try
-	{
-	  filter = new PatternFileFilter(line);
-	}// try
-	catch(PatternSyntaxException e)
-	{
-	  shell.print(shell.msg("invalide_pattern")+"\n");
-	  
-	}// catch(PatternSyntaxException e)«»
-      }//if(matcher.find())
-      else path += line;
-    }// if(line != null && line.length() > 0)
+      path = pwd;
 
-    return("");
+      return ("");
+    }
+
+    //	if (line.length() <= 0)
+    File newpos;
+    if (!line.startsWith("/"))
+    {
+      newpos = new File(pwd, line);
+    }
+    else
+    {
+      newpos = new File(line);
+    }
+
+    try
+    {
+      path = newpos.getCanonicalPath();
+    } catch (IOException e)
+    {
+
+      shell.print("no such path :" + newpos.getAbsolutePath());
+    }
+    return ("");
   }// public String parse(String line)
+
   /**
-
-    help
-
-    issue the help message associated with this command
-
+   *
+   * help
+   *
+   * issue the help message associated with this command
+   *
    */
   @Override
   public String help()
   {
-    return(shell.msg("ls")+" <"+shell.msg("path")+"> "+shell.msg("to_display_directory")+"\n");
+    return (new StringBuilder().append(shell.msg("LS")).append(" ").append(shell.msg("PATH")).append(" ").append(shell.msg("TO_DISPLAY_DIRECTORY")).append("\n")).toString();
   }//end help
   //make a copy of this object
+
   @Override
   public Object clone()
   {
-    LsCommand cloned = (LsCommand)super.clone();
+    LsCommand cloned = (LsCommand) super.clone();
     return cloned;
   }//public Object clone()
 }//public class Command
