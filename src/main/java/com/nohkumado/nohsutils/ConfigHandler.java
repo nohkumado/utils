@@ -316,44 +316,83 @@ public class ConfigHandler implements Cloneable, ConfigHandlerInterface
    * @param argv
    * @return
    */
-  protected Preferences parseArgs(String argv[])
+  @Override
+  public Preferences parseArgs(String argv[], ShellI mU)
   {
-    String error = "";
-    if (argv.length > 0)
+    Options options = new Options();
+
+// add t optio
+    options.addOption(Option.builder("l")
+            .required(false)
+            .longOpt("language")
+            .desc(mU.msg("the_language_to_use"))
+            .hasArg()
+            .type(String.class)
+            .argName("LANG")
+            .build());
+    options.addOption(Option.builder("c")
+            .required(false)
+            .longOpt("country")
+            .desc(mU.msg("the_country_to_use"))
+            .hasArg()
+            .type(String.class)
+            .argName("COUNTRY")
+            .build());
+
+    options.addOption(Option.builder("f")
+            .required(false)
+            .longOpt("file")
+            .desc(mU.msg("a_character_file"))
+            .hasArg()
+            .type(String.class)
+            .argName("FILE")
+            .build());
+    options.addOption(Option.builder("v")
+            .required(false)
+            .longOpt("verbose")
+            .desc(mU.msg("verbose"))
+            .build());
+
+    options.addOption(Option.builder("h")
+            .required(false)
+            .longOpt("help")
+            .desc(mU.msg("help"))
+            .build());
+
+    CommandLineParser parser = new DefaultParser();
+    CommandLine cmd;
+    try
     {
-      for (int i = 0; i < argv.length; i++)
-      {
-        String tmp = argv[i].toUpperCase().trim();
-        String next = null;
-        if ((i + 1) < argv.length)
-        {
-          next = argv[i + 1].toUpperCase().trim();
-        }
-        if (tmp.startsWith("-"))
-        {
-          //process switch 
-          tmp = tmp.substring(1, tmp.length());
-          if (next.startsWith("-"))
-          {
-            next = "true";
-          }
-          else
-          {
-            i++;
-          }
-          settings.put(tmp, next);
-        }
-        else
-        {
-          //error += msg.getString("couldn't handle")+" "+tmp+"\n"; 
-          error += "couldn't handle" + " " + tmp + "\n";
-        }// else  
-      }// end for
-      if (error.length() > 0)
-      {
-        settings.put("error", error);
-      }
-    }//end if( argv.length > 0)
+      cmd = parser.parse(options, argv);
+    } 
+    catch (org.apache.commons.cli.ParseException ex)
+    {
+      HelpFormatter formatter = new HelpFormatter();
+      formatter.printHelp("Quelkar", options);
+      return settings;
+    }
+    
+    
+    if (cmd.hasOption("language"))
+    {
+      settings.put("lang", cmd.getOptionValue("language"));
+    }
+    if (cmd.hasOption("country"))
+    {
+      settings.put("country", cmd.getOptionValue("country"));
+    }
+     if (cmd.hasOption("file"))
+    {
+      settings.put("file", cmd.getOptionValue("file"));
+    }
+      if (cmd.hasOption("help"))
+    {
+      HelpFormatter formatter = new HelpFormatter();
+      formatter.printHelp("Quelkar", options);
+    }
+    
+
+
     return (settings);
   }//protected void parseArgs(String argv[])
 
@@ -465,86 +504,4 @@ public class ConfigHandler implements Cloneable, ConfigHandlerInterface
   {
     return (settings);
   }// public HashMap<String,Object> container()
-
-  @Override
-  public Preferences parseArgs(String[] arguments, ShellI mU)
-  {
-    Options options = new Options();
-
-// add t optio
-    options.addOption(Option.builder("l")
-            .required(false)
-            .longOpt("language")
-            .desc(mU.msg("the_language_to_use"))
-            .hasArg()
-            .type(String.class)
-            .argName("LANG")
-            .build());
-    options.addOption(Option.builder("c")
-            .required(false)
-            .longOpt("country")
-            .desc(mU.msg("the_country_to_use"))
-            .hasArg()
-            .type(String.class)
-            .argName("COUNTRY")
-            .build());
-
-    options.addOption(Option.builder("f")
-            .required(false)
-            .longOpt("file")
-            .desc(mU.msg("a_character_file"))
-            .hasArg()
-            .type(String.class)
-            .argName("FILE")
-            .build());
-    options.addOption(Option.builder("v")
-            .required(false)
-            .longOpt("verbose")
-            .desc(mU.msg("verbose"))
-            .build());
-
-    options.addOption(Option.builder("h")
-            .required(false)
-            .longOpt("help")
-            .desc(mU.msg("help"))
-            .build());
-
-    CommandLineParser parser = new DefaultParser();
-    CommandLine cmd;
-    try
-    {
-      cmd = parser.parse(options, arguments);
-    } catch (ParseException ex)
-    {
-      // automatically generate the help statement
-      HelpFormatter formatter = new HelpFormatter();
-      formatter.printHelp("Quelkar", options);
-      return settings;
-    }
-
-    if (cmd.hasOption("language"))
-    {
-      settings.put("language", cmd.getOptionValue("lang"));
-    }
-    if (cmd.hasOption("country"))
-    {
-      settings.put("country", cmd.getOptionValue("country"));
-    }
-    if (cmd.hasOption("file"))
-    {
-      settings.put("file", cmd.getOptionValue("file"));
-    }
-    if (cmd.hasOption("verbose"))
-    {
-      settings.put("verbose", "true");
-    }
-    if (cmd.hasOption("help"))
-    {
-      // automatically generate the help statement
-      HelpFormatter formatter = new HelpFormatter();
-      formatter.printHelp("Quelkar", options);
-    }
-
-    return (settings);
-  }
 }//public class ConfigHandler implements Cloneable

@@ -1,15 +1,4 @@
-/** Id: ConfigHandlerInterface.java,v 1.4 2005/09/30 16:24:48 bboett Exp  -*- java -*-
- *
- * NAME ConfigHandlerInterface 
- *
- * AUTHOR Bruno Böttcher <bboett at adlp.org> 
- *
- * SEE ALSO no docu at the moment 
- *
- * SYNOPSIS
- *
- * subclass  thing to get the setting method 
- *
+/**  * subclass  thing to get the setting method  *
  * DESCRIPTION 
  * 
  * This class is an entity that is given a target and then loads or saves the settings

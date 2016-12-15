@@ -1,8 +1,4 @@
-/* $Id: MessageUserInterface.java,v 1.1 2005/10/29 10:26:40 bboett Exp $ -*- java -*-
- * Copyright (C) 2005 Bruno Boettcher
- * bboett@adlp.org
- * http://inforezo.u-strasbg.fr/~bboett
- *
+/* 
  * All rights reserved
  *
  * Permission to use, copy, modify and distribute this material for
