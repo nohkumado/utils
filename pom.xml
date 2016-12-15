@@ -12,6 +12,30 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <name>nohkumado support library</name>
+    <description>At the moment mainly a hell framework for CLI programs </description>
+    <url>https://sites.google.com/site/nokumado/home/noh-utils</url>
+   
+   <licenses>
+        <license>
+            <name>LGPL license, Version 3.0</name>
+            <url>https://www.gnu.org/licenses/lgpl.txt</url>
+        </license>
+    </licenses>
+ 
+    <developers>
+        <developer>
+            <name>NohKumaDo</name>
+            <email>nohkumado@gmail.com</email>
+            <organization>NohKumaDo</organization>
+            <organizationUrl>https://sites.google.com/site/nokumado</organizationUrl>
+        </developer>
+    </developers>
+ 
+    <scm>
+        <connection>scm:git:git@github.com:nohkumado/utils.git</connection>
+        <developerConnection>scm:git:git@github.com:nohkumado/utils.git</developerConnection>
+        <url>git@github.com:nohkumado/utils.git</url>
+    </scm>
     <dependencies>
         <dependency>
             <groupId>commons-cli</groupId>
