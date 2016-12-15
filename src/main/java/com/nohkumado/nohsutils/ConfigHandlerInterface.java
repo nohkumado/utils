@@ -137,6 +137,14 @@ public interface ConfigHandlerInterface extends Cloneable
      * @param arguments HashMap<String,Object>arguments 
     */
     public void parseArgs(HashMap<String,Object>arguments);
+
+  /**
+   *
+   * @param arguments
+   * @param mU
+   * @return
+   */
+  public Preferences parseArgs(String[] arguments, ShellI mU);
     /**
 
       fetchNext 
