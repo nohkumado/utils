@@ -145,7 +145,7 @@ public class CmdLineParser extends ConfigUser implements CommandParserI
       //then test if ;
       //then split in cmd args
       //search cmd and clone cmds and feed args
-      //put into vector
+      //put into ArrayList
       String mode = shell.get("parsing");
       if (mode == null || "parsing".equals("parsing"))
       {

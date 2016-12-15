@@ -82,7 +82,7 @@ public interface CommandI extends Cloneable
     /** 
      * instead of parsing the options, give them directly, eg when invoking a command from the program code directly
      * 
-     * @param parms the hashtable with the options 
+     * @param parms the HashMap with the options 
      */
     public void setParameters(HashMap<String,Object> parms);
     /**

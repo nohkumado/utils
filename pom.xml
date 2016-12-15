@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.nohkumado</groupId>
     <artifactId>noh-utils</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -12,7 +12,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <name>nohkumado support library</name>
-    <description>At the moment mainly a hell framework for CLI programs </description>
+    <description>At the moment mainly a shell framework for CLI programs </description>
     <url>https://sites.google.com/site/nokumado/home/noh-utils</url>
    
    <licenses>
